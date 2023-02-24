@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace NewHome.Pages.BlogPost;
+namespace DyrmanCom.Pages.BlogPost;
 
 public class Index : PageModel
 {

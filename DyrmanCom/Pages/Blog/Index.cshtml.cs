@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace NewHome.Pages.Blog;
+namespace DyrmanCom.Pages.Blog;
 
 public class Index : PageModel
 {
