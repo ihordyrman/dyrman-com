@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ihor Dyrman - .NET Backend Developer</title>
+    <link href="app.css" type="text/css" rel="stylesheet"/>
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+
+<body>
+<nav class="navbar">
+    <a type="button" class="btn btn-nord" href="/blog">Articles</a>
+    <span class="my-spacer"></span>
+    <a href="https://github.com/ihordyrman/" Target="_blank" title="GitHub">
+        <i class="fab fa-github align-content-center" aria-hidden="true"></i>
+    </a>
+
+    <a href="https://t.me/ihordyrman" Target="_blank" title="Telegram">
+        <i class="fab fa-telegram" aria-hidden="true"></i>
+    </a>
+
+    <a href="https://www.linkedin.com/in/ihordyrman/" Target="_blank" title="LinkedIn">
+        <i class="fab fa-linkedin" aria-hidden="true"></i>
+    </a>
+</nav>
+
+@RenderBody()
+
+<script src="/font-awesome/js/all.js"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

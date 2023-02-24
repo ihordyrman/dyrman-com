@@ -1,4 +1,5 @@
-@import 'bootstrap/bootstrap.min.css';
+﻿@import 'bootstrap/bootstrap.min.css';
+
 html,
 body {
     height: 100%;
@@ -103,9 +104,10 @@ a {
 }
 
 .btn-nord {
-    background-color: #81A1C1;
+    background-color: #cfd7e5;
     margin-left: 10px;
     font-size: 0.6em;
+    text-decoration: blink!important;
 }
 
 .navbar-toggler {
@@ -168,8 +170,8 @@ a {
     .navbar-toggler {
         display: none;
     }
+
     .collapse {
-        /* Never collapse the sidebar for wide screens */
         display: block;
     }
 }
@@ -179,6 +181,6 @@ a {
 }
 
 .warship {
-    color: white!important;
-    text-decoration: blink!important;
+    color: white !important;
+    text-decoration: blink !important;
 }
