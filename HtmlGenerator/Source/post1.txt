@@ -1,4 +1,4 @@
-﻿* Discussion on the Microsoft Store app: share your thoughts, insights, and feedback on the Microsoft Store app. Get tips, tricks, and updates on maximizing your app’s performance and discoverability.
+﻿* Discussion on the Microsoft Store app: share your thoughts, insights, and feedback on the Microsoft Store app. Get tips, tricks, and updates on maximizing your apps performance and discoverability.
 * Website and Store Service feedback: discuss the Microsoft Store website and services, including search results, browsing experience, and more. Share your ideas to enhance the user experience and make the Store even better.
 * Partner Center support: get assistance with MSIX and Win32 submissions, certification requirements, analytics, and other Partner Center related topics. Connect with experts who can guide you through the process.
 * Engage with Microsoft teams: interact with Microsoft PMs, engineers, and social media managers who are actively monitoring the channel. They are eager to listen to your feedback, address your concerns, and help you succeed.

@@ -1,0 +1,41 @@
+﻿/* CSS generated based on JetBrains Rider Light theme */
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTNFOVgaY.woff2) format('woff2');
+    unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+body {
+    color: #545492; /* From ReSharper.FSHARP_FUNCTION_IDENTIFIER */
+    background-color: #f4f5fb; /* From INDENT_RAINBOW_COLOR_1 */
+    font-family: "JetBrains Mono", Bahnschrift, monospace;
+
+    height: 100vh;
+    max-width: 1140px;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #f54d6; /* From CONSOLE_USER_INPUT */
+    text-align: center;
+}
+
+p {
+    color: #248700; /* From DEFAULT_BLOCK_COMMENT */
+    line-height: 1;
+}
+
+.comment {
+    color: #93a1; /* From TODO_DEFAULT_ATTRIBUTES */
+}
+
+code {
+    background-color: #99ccbb; /* From MATCHED_BRACE_ATTRIBUTES */
+}
