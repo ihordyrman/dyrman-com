@@ -1,0 +1,30 @@
+﻿/* CSS generated based on JetBrains Rider Light theme */
+
+body {
+    color: #545492; /* From ReSharper.FSHARP_FUNCTION_IDENTIFIER */
+    background-color: #f4f5fb; /* From INDENT_RAINBOW_COLOR_1 */
+    font-family: "JetBrains Mono", Bahnschrift, monospace;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #f54d6; /* From CONSOLE_USER_INPUT */
+    text-align: center;
+}
+
+p {
+    color: #248700; /* From DEFAULT_BLOCK_COMMENT */
+    line-height: 1.6;
+}
+
+.comment {
+    color: #93a1; /* From TODO_DEFAULT_ATTRIBUTES */
+}
+
+code {
+    background-color: #99ccbb; /* From MATCHED_BRACE_ATTRIBUTES */
+}
