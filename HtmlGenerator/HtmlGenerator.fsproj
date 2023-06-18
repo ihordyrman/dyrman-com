@@ -16,4 +16,8 @@
         <Compile Include="Program.fs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Markdig" Version="0.31.0" />
+    </ItemGroup>
+
 </Project>
