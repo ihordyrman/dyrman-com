@@ -89,6 +89,7 @@ a {
 
 .navbar a {
     color: #3B4252;
+    text-decoration: none;
     padding-left: 10px;
 }
 
