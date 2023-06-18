@@ -1,4 +1,4 @@
-﻿@import 'bootstrap/bootstrap.min.css';
+@import 'bootstrap/bootstrap.min.css';
 
 html,
 body {
@@ -8,7 +8,7 @@ body {
 
 body {
     margin: 0;
-    font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+    font-family: "Verdana", "Segoe UI", "Helvetica Neue", sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -90,7 +90,6 @@ a {
 
 .navbar {
     background-color: #E5E9F0;
-    font-size: 1.6em;
     position: static;
 }
 
@@ -107,7 +106,7 @@ a {
     background-color: #cfd7e5;
     margin-left: 10px;
     font-size: 0.6em;
-    text-decoration: blink!important;
+    text-decoration: blink !important;
 }
 
 .navbar-toggler {
