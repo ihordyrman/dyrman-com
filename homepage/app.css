@@ -8,7 +8,7 @@ body {
 
 body {
     margin: 0;
-    font-family: "Verdana", "Segoe UI", "Helvetica Neue", sans-serif;
+    font-family: Bahnschrift, Verdana, "Segoe UI", sans-serif;
 }
 
 ::-webkit-scrollbar {
