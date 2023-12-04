@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HtmlGenerator", "HtmlGenerator\HtmlGenerator.fsproj", "{F217DC6E-8CE0-41CE-8C59-BB273CB62262}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "homepage", "homepage", "{13EB212B-754E-40AC-B323-83C5E8F55A5C}"
 	ProjectSection(SolutionItems) = preProject
 		homepage\index.html = homepage\index.html
@@ -26,10 +24,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F217DC6E-8CE0-41CE-8C59-BB273CB62262}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F217DC6E-8CE0-41CE-8C59-BB273CB62262}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F217DC6E-8CE0-41CE-8C59-BB273CB62262}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F217DC6E-8CE0-41CE-8C59-BB273CB62262}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{591B8F71-E991-46A5-9F85-4DAF3B21EF29} = {13EB212B-754E-40AC-B323-83C5E8F55A5C}
