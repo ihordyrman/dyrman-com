@@ -8,13 +8,23 @@
     <ItemGroup>
         <Folder Include="Outputs\" />
         <Content Include="Files\styles.css">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Files\Bahnschrift.ttf">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Files\Bahnschrift.ttf" />
-        <Content Include="Files\favicon.ico" />
-        <Content Include="Files\index.html" />
-        <Content Include="Files\bootstrap.min.css.map" />
-        <Content Include="Files\bootstrap.min.css" />
+        <Content Include="Files\favicon.ico">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Files\index.html">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Files\bootstrap.min.css.map">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Files\bootstrap.min.css">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
 
         <Compile Include="MarkdownProcessor.fs" />
         <Compile Include="HtmlProcessor.fs" />

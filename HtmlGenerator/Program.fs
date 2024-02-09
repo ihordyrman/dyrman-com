@@ -13,21 +13,28 @@ let fileContent (file: string) =
     |> String.concat ""
 
 Directory.GetFiles(@"..\..\..\..\notes\", "*.md", SearchOption.AllDirectories)
-    |> Array.iter (fun file ->
-        let content = fileContent file
-        let getProperties = MarkdownProcessor.getProperties file |> MarkdownProcessor.getPropertyByName
+|> Array.iter (fun file ->
+    let content = fileContent file
+    let getProperties = MarkdownProcessor.getProperties file |> MarkdownProcessor.getPropertyByName
 
-        let date = getProperties "date"
-        let title = getProperties "page-title"
-        let url = getProperties "url"
+    let date = getProperties "date"
+    let title = getProperties "page-title"
+    let url = getProperties "url"
 
-        let htmlContent = MarkdownProcessor.processMarkdown content
-        let htmlTemplate = HtmlProcessor.getHtmlFromTemplate title date htmlContent
+    let htmlContent = MarkdownProcessor.processMarkdown content
+    let htmlTemplate = HtmlProcessor.getHtmlFromTemplate title date htmlContent
 
-        File.WriteAllText($@"..\..\..\Outputs\{url}.html", htmlTemplate, System.Text.Encoding.UTF8)
+    File.WriteAllText($@"..\..\..\Outputs\{url}.html", htmlTemplate, System.Text.Encoding.UTF8)
 
-        printfn $"%s{htmlTemplate}")
+    printfn $"%s{htmlTemplate}")
 
-File.Copy("StaticFiles\styles.css", @"..\..\..\Outputs\styles.css", true)
-File.Copy("StaticFiles\Bahnschrift.ttf", @"..\..\..\Outputs\Bahnschrift.ttf", true)
-File.Copy("StaticFiles\favicon.ico", @"..\..\..\Outputs\favicon.ico", true)
+
+Directory.GetFiles("StaticFiles", "*", SearchOption.AllDirectories)
+|> Array.iter (fun file -> File.Copy(file, $@"..\..\..\Outputs\{Path.GetFileName file}", true))
+
+// todo:
+// 1. better formatting for notes
+// 2. add notes button to the main page
+// 3. add content page for notes with notes preview
+// 4. add tags to notes (based on the properties)
+// 5. change styles

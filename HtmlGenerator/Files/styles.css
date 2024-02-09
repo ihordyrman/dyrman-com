@@ -1,9 +1,9 @@
-﻿@import '../../homepage/bootstrap/bootstrap.min.css';
+﻿@import 'bootstrap.min.css';
 
 html,
 body {
     height: 100%;
-    background-color: #D8DEE9;
+    background-color: #DFE4F0;
 }
 
 @font-face {
@@ -21,11 +21,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #E5E9F0;
+    background: #ECF1F6;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #ECEFF4;
+    background: #FFF9E6;
 }
 
 .content-wrapper {
@@ -46,22 +46,22 @@ body {
     font-weight: bold;
     text-align: center;
     color: #3B4252;
-    background-color: #ECEFF4;
+    background-color: #F2F5FA;
 }
 
 .more-info {
-    background-color: #E5E9F0;
-    color: #3B4252
+    background-color: #EBF0FA;
+    color: #3B4252;
 }
 
 .skills {
-    background-color: #dce2ec;
+    background-color: #E3E8F2;
     color: #3B4252;
 }
 
 .contact {
     color: #3B4252;
-    background-color: #D8DEE9;
+    background-color: #DFE4F0;
 }
 
 a:link {
@@ -70,7 +70,7 @@ a:link {
 }
 
 a:hover {
-    color: #576a9d;
+    color: #576A9D;
 }
 
 a:visited {
@@ -80,7 +80,7 @@ a:visited {
 button,
 a {
     text-decoration: none;
-    color: #e4eaf5;
+    color: #E4EAF5;
 }
 
 .spacer {
@@ -88,7 +88,7 @@ a {
 }
 
 .navbar {
-    background-color: #E5E9F0;
+    background-color: #ECF1F6;
     position: static;
 }
 
@@ -99,7 +99,7 @@ a {
 }
 
 .navbar a:hover {
-    color: #576a9d;
+    color: #576A9D;
 }
 
 .navbar a {
