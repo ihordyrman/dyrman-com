@@ -4,18 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "homepage", "homepage", "{13EB212B-754E-40AC-B323-83C5E8F55A5C}"
-	ProjectSection(SolutionItems) = preProject
-		homepage\index.html = homepage\index.html
-		homepage\app.css = homepage\app.css
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bootstrap", "bootstrap", "{591B8F71-E991-46A5-9F85-4DAF3B21EF29}"
-	ProjectSection(SolutionItems) = preProject
-		homepage\bootstrap\bootstrap.min.css = homepage\bootstrap\bootstrap.min.css
-		homepage\bootstrap\bootstrap.min.css.map = homepage\bootstrap\bootstrap.min.css.map
-	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HtmlGenerator", "HtmlGenerator\HtmlGenerator.fsproj", "{91B2D122-4338-4A4E-95B4-7E8E654889E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{8F949357-66CC-4234-8FAE-85419D29F54C}"
+	ProjectSection(SolutionItems) = preProject
+		notes\post1.md = notes\post1.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +27,5 @@ Global
 		{91B2D122-4338-4A4E-95B4-7E8E654889E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{591B8F71-E991-46A5-9F85-4DAF3B21EF29} = {13EB212B-754E-40AC-B323-83C5E8F55A5C}
 	EndGlobalSection
 EndGlobal

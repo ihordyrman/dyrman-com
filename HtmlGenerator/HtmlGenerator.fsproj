@@ -6,16 +6,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="Source\post1.md">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Compile Include="Program.fs" />
-        <Content Include="Styles\styles.css" />
         <Folder Include="Outputs\" />
+        <Content Include="Files\styles.css">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Files\Bahnschrift.ttf" />
+        <Content Include="Files\favicon.ico" />
+        <Content Include="Files\index.html" />
+        <Content Include="Files\bootstrap.min.css.map" />
+        <Content Include="Files\bootstrap.min.css" />
+
+        <Compile Include="MarkdownProcessor.fs" />
+        <Compile Include="HtmlProcessor.fs" />
+        <Compile Include="Program.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Markdig" Version="0.31.0" />
+        <PackageReference Include="Markdig" Version="0.34.0" />
     </ItemGroup>
 
 </Project>
