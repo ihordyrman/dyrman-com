@@ -1,0 +1,115 @@
+﻿@import 'bootstrap/bootstrap.min.css';
+
+:root {
+    --dark-text: #3B4252;
+    --grey-text: #707b8f;
+    --0: #F1F5FF;
+    --1: #EFF2FF;
+    --2: #EBEEFB;
+    --3: #E7EAF7;
+    --4: #E3E6F3;
+    --5: #DFE2EF;
+}
+
+html,
+body {
+    height: 100%;
+    background-color: var(--4);
+}
+
+@font-face {
+    font-family: Bahnschrift;
+    src: url('Bahnschrift.ttf') format('truetype');
+}
+
+body {
+    margin: 0;
+    font-family: Bahnschrift, Verdana, sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--4);
+}
+
+.content-wrapper {
+    line-height: 1.4;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 30px 25px;
+}
+
+.header-info {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 250px;
+    padding: 0 20px;
+    position: relative;
+    font-weight: bold;
+    text-align: center;
+    color: var(--dark-text);
+    background-color: var(--0);
+}
+
+.more-info {
+    background-color: var(--1);
+    color: var(--dark-text);
+}
+
+.skills {
+    background-color: var(--2);
+    color: var(--dark-text);
+}
+
+.contact {
+    color: var(--dark-text);
+    background-color: var(--3);
+}
+
+a:link {
+    color: var(--dark-text);
+    text-decoration: underline;
+}
+
+a:visited {
+    color: var(--dark-text);
+}
+
+button,
+a {
+    text-decoration: none;
+    color: var(--dark-text);
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.navbar {
+    background-color: var(--1);
+    position: static;
+}
+
+.navbar a {
+    color: var(--dark-text);
+    text-decoration: none;
+    padding-left: 10px;
+}
+
+a:hover {
+    color: var(--grey-text);
+    transition: color 0.3s;
+}
+
+.navbar a {
+    padding-right: 10px;
+}
