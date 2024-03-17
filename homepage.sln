@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "homepage", "homepage", "{13EB212B-754E-40AC-B323-83C5E8F55A5C}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HtmlGenerator", "HtmlGenerator\HtmlGenerator.fsproj", "{91B2D122-4338-4A4E-95B4-7E8E654889E5}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NotesGenerator", "NotesGenerator\NotesGenerator.fsproj", "{91B2D122-4338-4A4E-95B4-7E8E654889E5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{8F949357-66CC-4234-8FAE-85419D29F54C}"
 	ProjectSection(SolutionItems) = preProject

@@ -3,6 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
+        <RootNamespace>HtmlGenerator</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,23 +12,24 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Files\Bahnschrift.ttf">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Files\favicon.ico">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Files\index.html">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Files\bootstrap.min.css.map">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Files\bootstrap.min.css">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
 
         <Compile Include="MarkdownProcessor.fs" />
-        <Compile Include="HtmlProcessor.fs" />
+        <Compile Include="HtmlTemplates.fs" />
+        <Compile Include="MdConverter.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

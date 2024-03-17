@@ -1,7 +1,7 @@
 ﻿[<RequireQualifiedAccess>]
-module HtmlProcessor
+module HtmlTemplates
 
-let getHtmlFromTemplate title date htmlContent =
+let getNoteFromTemplate title date htmlContent =
     $"""
     <!DOCTYPE html>
     <html lang="en">

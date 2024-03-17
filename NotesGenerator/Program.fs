@@ -22,7 +22,7 @@ Directory.GetFiles(@"..\..\..\..\notes\", "*.md", SearchOption.AllDirectories)
     let url = getProperties "url"
 
     let htmlContent = MarkdownProcessor.processMarkdown content
-    let htmlTemplate = HtmlProcessor.getHtmlFromTemplate title date htmlContent
+    let htmlTemplate = HtmlTemplates.getNoteFromTemplate title date htmlContent
 
     File.WriteAllText($@"..\..\..\Outputs\{url}.html", htmlTemplate, System.Text.Encoding.UTF8)
 
