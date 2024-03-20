@@ -1,9 +1,20 @@
 ﻿@import 'bootstrap.min.css';
 
+:root {
+    --dark-text: #3B4252;
+    --grey-text: #707b8f;
+    --0: #F1F5FF;
+    --1: #EFF2FF;
+    --2: #EBEEFB;
+    --3: #E7EAF7;
+    --4: #E3E6F3;
+    --5: #DFE2EF;
+}
+
 html,
 body {
     height: 100%;
-    background-color: #DFE4F0;
+    background-color: var(--4);
 }
 
 @font-face {
@@ -21,11 +32,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #ECF1F6;
+    background: var(--5);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #FFF9E6;
+    background: var(--4);
 }
 
 .content-wrapper {
@@ -45,42 +56,38 @@ body {
     position: relative;
     font-weight: bold;
     text-align: center;
-    color: #3B4252;
-    background-color: #F2F5FA;
+    color: var(--dark-text);
+    background-color: var(--0);
 }
 
 .more-info {
-    background-color: #EBF0FA;
-    color: #3B4252;
+    background-color: var(--1);
+    color: var(--dark-text);
 }
 
 .skills {
-    background-color: #E3E8F2;
-    color: #3B4252;
+    background-color: var(--2);
+    color: var(--dark-text);
 }
 
 .contact {
-    color: #3B4252;
-    background-color: #DFE4F0;
+    color: var(--dark-text);
+    background-color: var(--3);
 }
 
 a:link {
-    color: #3B4252;
+    color: var(--dark-text);
     text-decoration: underline;
 }
 
-a:hover {
-    color: #576A9D;
-}
-
 a:visited {
-    color: #81A1C1;
+    color: var(--dark-text);
 }
 
 button,
 a {
     text-decoration: none;
-    color: #E4EAF5;
+    color: var(--dark-text);
 }
 
 .spacer {
@@ -88,18 +95,19 @@ a {
 }
 
 .navbar {
-    background-color: #ECF1F6;
+    background-color: var(--1);
     position: static;
 }
 
 .navbar a {
-    color: #3B4252;
+    color: var(--dark-text);
     text-decoration: none;
     padding-left: 10px;
 }
 
-.navbar a:hover {
-    color: #576A9D;
+a:hover {
+    color: var(--grey-text);
+    transition: color 0.3s;
 }
 
 .navbar a {

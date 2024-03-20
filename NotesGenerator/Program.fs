@@ -13,24 +13,33 @@ let fileContent (file: string) =
     |> String.concat ""
 
 Directory.GetFiles(@"..\..\..\..\notes\", "*.md", SearchOption.AllDirectories)
+|> fun x ->
+    printfn $"{x.Length}"
+    x
 |> Array.iter (fun file ->
-    let content = fileContent file
-    let getProperties = MarkdownProcessor.getProperties file |> MarkdownProcessor.getPropertyByName
+        let content = File.ReadAllLines file |> MdConverter.convertMarkdownToHtml
+        printfn $"{content}"
+        ())
 
-    let date = getProperties "date"
-    let title = getProperties "page-title"
-    let url = getProperties "url"
+// Directory.GetFiles(@"..\..\..\..\notes\", "*.md", SearchOption.AllDirectories)
+// |> Array.iter (fun file ->
+//     let content = fileContent file
+//     let getProperties = MarkdownProcessor.getProperties file |> MarkdownProcessor.getPropertyByName
+//
+//     let date = getProperties "date"
+//     let title = getProperties "page-title"
+//     let url = getProperties "url"
+//
+//     let htmlContent = MarkdownProcessor.processMarkdown content
+//     let htmlTemplate = HtmlTemplates.getHtmlFromTemplate title date htmlContent
+//
+//     File.WriteAllText($@"..\..\..\Outputs\{url}.html", htmlTemplate, System.Text.Encoding.UTF8)
+//
+//     printfn $"%s{htmlTemplate}")
 
-    let htmlContent = MarkdownProcessor.processMarkdown content
-    let htmlTemplate = HtmlTemplates.getNoteFromTemplate title date htmlContent
 
-    File.WriteAllText($@"..\..\..\Outputs\{url}.html", htmlTemplate, System.Text.Encoding.UTF8)
-
-    printfn $"%s{htmlTemplate}")
-
-
-Directory.GetFiles("StaticFiles", "*", SearchOption.AllDirectories)
-|> Array.iter (fun file -> File.Copy(file, $@"..\..\..\Outputs\{Path.GetFileName file}", true))
+// Directory.GetFiles("StaticFiles", "*", SearchOption.AllDirectories)
+// |> Array.iter (fun file -> File.Copy(file, $@"..\..\..\Outputs\{Path.GetFileName file}", true))
 
 // todo:
 // 1. better formatting for notes

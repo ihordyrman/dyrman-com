@@ -1,5 +1,6 @@
 ﻿module MdConverter
 
+open System.Collections.Generic
 open System.Text
 
 // Convert a markdown string to HTML
@@ -17,75 +18,61 @@ open System.Text
 // 11. --- -> <hr>
 
 // active pattern
-let (|Header|) (str: string) =
+let private (|Header|_|) (str: string) =
     match str with
     | s when s.StartsWith("#") -> Some s
     | _ -> None
 
-let (|ListItem|) (str: string) =
+let private (|ListItem|_|) (str: string) =
     match str with
-    | s when s.StartsWith("- ") -> Some s
+    | text when text.StartsWith("- ") -> Some text
     | _ -> None
 
-let (|Meta|) (str: string) =
+let private (|Meta|_|) (str: string) =
     match str with
-    | s when s.StartsWith("---") -> Some s
+    | text when text.StartsWith("---") -> Some text
     | _ -> None
 
-let (|Image|) (str: string) =
+let private (|Image|_|) (str: string) =
     match str with
-    | s when s.StartsWith("![") -> Some s
+    | text when text.StartsWith("![") -> Some text
     | _ -> None
 
-let appendHeader (sb: StringBuilder) (markdown: string option) =
-    match markdown with
-    | Some markdown ->
+let private appendHeader (sb: StringBuilder) (markdown: string) =
         let count =
             markdown |> Seq.takeWhile (fun c -> c = '#') |> Seq.length |> (fun x -> if x > 6 then 6 else x)
 
-        sb.Append $"<h{count}>%s{markdown.TrimStart('#').Trim()}</h{count}>"
-    | None -> sb
+        sb.Append $"<h{count}>%s{markdown.TrimStart('#').Trim()}</h{count}>" |> ignore
 
-let appendListItem (sb: StringBuilder) (markdown: string option) =
-    match markdown with
-    | Some markdown -> sb.Append $"<li>%s{markdown.TrimStart('*').Trim()}</li>"
-    | None -> sb
+let private appendListItem (sb: StringBuilder) (markdown: string) =
+    sb.Append $"<li>%s{markdown.TrimStart('*').Trim()}</li>" |> ignore
 
-let appendRegularText (sb: StringBuilder) (markdown: string option) =
-    match markdown with
-    | Some markdown -> sb.Append(markdown)
-    | None -> sb
+let private appendRegularText (sb: StringBuilder) (markdown: string) =
+    sb.Append(markdown) |> ignore
 
-let appendImage (sb: StringBuilder) (markdown: string option) =
-    match markdown with
-    | Some markdown ->
+let private appendImage (sb: StringBuilder) (markdown: string) =
         sb.Append $"<img src=\"%s{markdown.TrimStart('!').Trim()}\" alt=\"%s{markdown.TrimStart('!').Trim()}\" />"
-    | None -> sb
+        |> ignore
 
-let extractMeta (markdown: string option) =
+let private extractMeta (markdown: string) (dic: Dictionary<string, string>) =
+    let meta = markdown.Split(":")
+    let key = meta.[0].Trim()
+    let value = meta.[1].Trim()
+    dic.Add(key, value)
 
-
-    ()
-
-let convertMarkdownToHtml (markdown: string[]) string =
+let convertMarkdownToHtml (markdown: string[]) : string =
     let sb = StringBuilder()
+    let dic = Dictionary<string, string>()
+    let mutable metaArea = false
 
-    let rec convert (markdown: string) =
+    markdown
+    |> Array.iter (fun markdown ->
         match markdown with
-        | "" -> ()
-        | _ ->
-            let builder =
-                match markdown with
-                | Header header -> appendHeader sb header
-                | ListItem li -> appendListItem sb li
-                | Meta meta ->
-                    extractMeta meta
-                    sb
-                | Image image -> appendImage sb image
-                | _ -> appendRegularText sb (Some markdown)
-
-            convert (markdown.Substring(1))
-
-    markdown |> Array.iter convert
+        | Meta _ -> metaArea <- not metaArea
+        | meta when metaArea -> extractMeta meta dic
+        | Image image -> appendImage sb image
+        | ListItem li -> appendListItem sb li
+        | Header header -> appendHeader sb header
+        | _ -> appendRegularText sb markdown)
 
     sb.ToString()
