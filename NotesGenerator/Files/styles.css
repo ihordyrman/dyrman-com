@@ -1,20 +1,19 @@
 ﻿@import 'bootstrap.min.css';
 
 :root {
+    --code: #EFEFE9;
     --dark-text: #3B4252;
     --grey-text: #707b8f;
-    --0: #F1F5FF;
-    --1: #EFF2FF;
-    --2: #EBEEFB;
-    --3: #E7EAF7;
-    --4: #E3E6F3;
-    --5: #DFE2EF;
+    --0: #F1F1E9;
+    --1: #EDEDE5;
+    --2: #EAEAE2;
+    --3: #E6E6DD;
 }
 
 html,
 body {
     height: 100%;
-    background-color: var(--4);
+    background-color: var(--3);
 }
 
 @font-face {
@@ -32,11 +31,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--5);
+    background: var(--0);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--4);
+    background: var(--3);
 }
 
 .content-wrapper {
@@ -112,4 +111,35 @@ a:hover {
 
 .navbar a {
     padding-right: 10px;
+}
+
+pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+pre {
+    background-color: var(--code);
+    border-left: 3px solid var(--dark-text);
+}
+
+code {
+    border-radius: 3px;
+    color: var(--dark-text);
+    font-family: monospace;
+    padding: 0.2em 0.4em;
 }

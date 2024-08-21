@@ -1,0 +1,31 @@
+﻿
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Networking Models</title>
+        <link rel="stylesheet" type="text/css" href="../Files/styles.css">
+    </head>
+    <body>
+        <div class="content-wrapper">
+            <article class="blog-post">
+                <h1>Networking Models</h1>
+                <p class="post-date">2024-03-17 21</p>
+                The OSI seven-layer model encourages modular design in networking, meaning that each layer has as little to do with the operation of other layers as possible.<br />Each layer on the model trusts that the other layers on the model do their jobs.<br /><br /><li>Layer 7 Application</li><li>Layer 6 Presentation</li><li>Layer 5 Session</li><li>Layer 4 Transport</li><li>Layer 3 Network</li><li>Layer 2 Data Link</li><li>Layer 1 Physical</li><br />Please Do Not Throw Sauce Pizza Away<br /><br /><h4>Layer 1</h4>Layer 1 of the `OSI model` defines the method of moving data between computers.<br />Anything that moves data from one system to another, such as copper cabling, fiber optics, even radio waves, is part of the OSI Physical layer.<br />Layer 1 doesn’t care what data goes through; it just moves the data from one system to another system.<br /><img src="./Images/20240302163730.png" alt="20240302163730.png"/><br />The network interface card, or NIC (pronounced “nick”), which serves as the interface between the PC and the network.<br /><br />Inside every NIC, burned onto some type of ROM chip, is special firmware containing a unique identifier with a 48-bit value called the media access control address, or MAC address.<br />MAC addresses are always written in hex.<br />If MAC address is 00–40–05–60–7D–49:<br /><li>The first six digits, in this example 00–40–05, represent the number of the NIC manufacturer.</li><li>The last six digits, in this example 60–7D–49, are the manufacturer’s unique serial number.</li><br />Please read this: &lt;a href=&quot;https://bhg2.wordpress.com/wp-content/uploads/2017/11/unit1cn.pdf&quot;&gt;Unit 1: OSI Model&lt;/a&gt;<br /><br /><pre><code>WebApplicationBuilder builder = WebApplication.CreateBuilder();
+var currentAssembly = Assembly.GetExecutingAssembly();
+
+builder.Host.AddSerilog()
+    .AddLocalization&lt;IErrorMessagesLocalizer, IEntitiesLocalizer, IEnumsLocalizer, IReportColumnsLocalizer&gt;(
+        new AssemblyName(typeof(PaymentSystem).GetTypeInfo().Assembly.FullName!).Name!)
+    .AddMasterDbContext&lt;AdminCabinetMasterDbContext, MasterDbContext&gt;()
+    .AddReplicaDbContext&lt;ReplicaDbContext&gt;()
+    .AddOpenIddict()
+    .AddOpenTelemetry(builder.Environment.ApplicationName)
+    .AddKafka&lt;Program&gt;();
+</code></pre>
+            </article>
+        </div>
+    </body>
+    </html>
+    

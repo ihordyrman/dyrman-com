@@ -1,49 +1,36 @@
 ﻿open System.IO
 
-let fileContent (file: string) =
-    let mutable printable = true
+let environment = System.Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
 
-    file.Split([| '\n' |])
-    |> Array.filter (fun x ->
-        if x.StartsWith("---") then
-            printable <- not printable
-            false
-        else
-            printable)
-    |> String.concat ""
+let solutionFolder =
+    match environment with
+    | "Development" -> @"C:\Projects\Personal\homepage"
+    | "Production" -> "."
+    | _ -> failwith "Environment variable DOTNET_ENVIRONMENT is not set to Development"
 
-Directory.GetFiles(@"..\..\..\..\notes\", "*.md", SearchOption.AllDirectories)
-|> fun x ->
-    printfn $"{x.Length}"
-    x
+Directory.GetFiles(@$"{solutionFolder}\notes\", "*.md", SearchOption.AllDirectories)
+|> fun file ->
+    printfn $"{file.Length}"
+    file
 |> Array.iter (fun file ->
-        let content = File.ReadAllLines file |> MdConverter.convertMarkdownToHtml
-        printfn $"{content}"
-        ())
+    let content = File.ReadAllLines file |> HtmlRenderer.convertMarkdownToHtml
 
-// Directory.GetFiles(@"..\..\..\..\notes\", "*.md", SearchOption.AllDirectories)
-// |> Array.iter (fun file ->
-//     let content = fileContent file
-//     let getProperties = MarkdownProcessor.getProperties file |> MarkdownProcessor.getPropertyByName
-//
-//     let date = getProperties "date"
-//     let title = getProperties "page-title"
-//     let url = getProperties "url"
-//
-//     let htmlContent = MarkdownProcessor.processMarkdown content
-//     let htmlTemplate = HtmlTemplates.getHtmlFromTemplate title date htmlContent
-//
-//     File.WriteAllText($@"..\..\..\Outputs\{url}.html", htmlTemplate, System.Text.Encoding.UTF8)
-//
-//     printfn $"%s{htmlTemplate}")
+    let htmlTemplate =
+        HtmlTemplates.getHtmlFromTemplate content.Meta.Title content.Meta.Date content.HtmlContent
 
+    File.WriteAllText(
+        @$"{solutionFolder}\NotesGenerator\Outputs\{content.Meta.Path}.html",
+        htmlTemplate,
+        System.Text.Encoding.UTF8
+    )
 
-// Directory.GetFiles("StaticFiles", "*", SearchOption.AllDirectories)
-// |> Array.iter (fun file -> File.Copy(file, $@"..\..\..\Outputs\{Path.GetFileName file}", true))
+    printfn $"{content}"
+    ())
 
-// todo:
-// 1. better formatting for notes
-// 2. add notes button to the main page
-// 3. add content page for notes with notes preview
-// 4. add tags to notes (based on the properties)
-// 5. change styles
+Directory.GetFiles(@$"{solutionFolder}\NotesGenerator\Outputs\Images\", "*", SearchOption.AllDirectories)
+|> Array.iter (fun file -> File.Delete(file))
+
+Directory.GetFiles(@$"{solutionFolder}\notes\Images\", "*", SearchOption.AllDirectories)
+|> Array.iter (fun file ->
+    let fileName = Path.GetFileName file
+    File.Copy(file, $@"{solutionFolder}\NotesGenerator\Outputs\Images\{fileName}", true))
