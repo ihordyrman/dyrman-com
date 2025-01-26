@@ -9,12 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "homepage", "homepage", "{13
 		homepage\app.css = homepage\app.css
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bootstrap", "bootstrap", "{591B8F71-E991-46A5-9F85-4DAF3B21EF29}"
-	ProjectSection(SolutionItems) = preProject
-		homepage\bootstrap\bootstrap.min.css = homepage\bootstrap\bootstrap.min.css
-		homepage\bootstrap\bootstrap.min.css.map = homepage\bootstrap\bootstrap.min.css.map
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +20,5 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{591B8F71-E991-46A5-9F85-4DAF3B21EF29} = {13EB212B-754E-40AC-B323-83C5E8F55A5C}
 	EndGlobalSection
 EndGlobal
