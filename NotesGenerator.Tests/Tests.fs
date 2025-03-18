@@ -18,15 +18,16 @@ let ``If the string starts with - , it should be a list item`` () =
 
 [<Fact>]
 let ``If the string starts with ---, it should be a meta`` () =
-    let input =
-        """---
-Title: Title
-Date: 2024-01-01
-Url: url
-Tags: test
----"""
+    let assertValue (a: HtmlRenderer.HtmlPage) (b: string) (c: string) =
+        Assert.Equal(b, c)
+        a
 
-    HtmlRenderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal("", x.HtmlContent)
+    HtmlRenderer.convertMarkdownToHtml [| "---"; "title: Title"; "date: 2024-01-01"; "url: url"; "tags: test"; "---" |]
+    |> fun x -> assertValue x "2024-01-01" x.Meta.Date
+    |> fun x -> assertValue x "Title" x.Meta.Title
+    |> fun x -> assertValue x "url" x.Meta.Url
+    |> fun x -> assertValue x "" x.HtmlContent
+    |> fun x -> Assert.Equal<string list>(["test"], x.Meta.Tags)
 
 [<Fact>]
 let ``If the string starts with ![ , it should be an image`` () =
@@ -60,3 +61,11 @@ let ``If the string starts with *, it should be a bold text`` () =
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal("<b>bold text</b><br />", x.HtmlContent)
+
+
+[<Fact>]
+let ``If the string start with `  , it should be a code content`` () =
+    let input = "`code content`"
+
+    HtmlRenderer.convertMarkdownToHtml [| input |]
+    |> fun x -> Assert.Equal("<code>code content</code>", x.HtmlContent)

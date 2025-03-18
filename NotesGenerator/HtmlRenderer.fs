@@ -1,5 +1,7 @@
 ﻿module HtmlRenderer
 
+open System
+
 type Token =
     | Text of string
     | Bold of string
@@ -45,12 +47,7 @@ let private tokensToHtml tokens =
     tokens |> List.rev |> List.map convertToken |> String.concat ""
 
 let state =
-    { Tokens = []
-      CurrentText = ""
-      IsBold = false
-      IsCode = false
-      IsLink = false
-      LinkText = None }
+    { Tokens = []; CurrentText = ""; IsBold = false; IsCode = false; IsLink = false; LinkText = None }
 
 let rec private parseText (text: char list) (state: ProcessingState) =
     match text with
@@ -92,12 +89,7 @@ let rec private parseText (text: char list) (state: ProcessingState) =
         parseText rest newState
 
     | ']' :: '(' :: rest when not (state.IsCode || state.IsBold) ->
-        parseText
-            rest
-            { state with
-                LinkText = Some state.CurrentText
-                CurrentText = ""
-                IsLink = true }
+        parseText rest { state with LinkText = Some state.CurrentText; CurrentText = ""; IsLink = true }
 
     | ')' :: rest when state.IsLink ->
         let newState = finalizeLink state.CurrentText state
@@ -126,11 +118,8 @@ type MarkdownElement =
 
 type HtmlPage = { Meta: Meta; HtmlContent: string }
 
-type ConversionState =
-    { Meta: Map<string, string>
-      HtmlContent: string list
-      IsInMeta: bool
-      IsInCode: bool }
+type ConversionState = { Meta: Map<string, string>; HtmlContent: string list; IsInMeta: bool; IsInCode: bool }
+type ParsingState = { IsInMeta: bool; IsInCode: bool; MarkdownContent: MarkdownElement list }
 
 let private parseMetaLine (line: string) =
     match line.Split(':') with
@@ -148,11 +137,19 @@ let private parseImage (line: string) =
 
     Image(content, $"./Images/{content}")
 
-let private parseLine (line: string) =
-    match line.Trim() with
-    | "---" -> MetaMarker
-    | "```" -> CodeBlockMarker
-    | line when
+let private parseLine (state: ParsingState) (line: string) : ParsingState =
+    match (line.Trim(), state.IsInCode, state.IsInMeta) with
+    | "---", _, false -> { IsInMeta = true; IsInCode = false; MarkdownContent = state.MarkdownContent @ [ MetaMarker ] }
+    | "---", _, true -> { IsInMeta = false; IsInCode = false; MarkdownContent = state.MarkdownContent @ [ MetaMarker ] }
+    | _, _, true ->
+        let key = line.Split(':').[0].Trim()
+        let value = line.Split(':').[1].Trim()
+        { state with MarkdownContent = state.MarkdownContent @ [ MetaContent(key, value) ] }
+    | "```", _, _ ->
+        { IsInCode = not state.IsInCode
+          IsInMeta = false
+          MarkdownContent = state.MarkdownContent @ [ CodeBlockMarker ] }
+    | line, _, _ when
         line.StartsWith("# ")
         || line.StartsWith("## ")
         || line.StartsWith("### ")
@@ -160,10 +157,14 @@ let private parseLine (line: string) =
         || line.StartsWith("##### ")
         || line.StartsWith("###### ")
         ->
-        parseHeader line
-    | line when line.StartsWith("![") -> parseImage line
-    | line when line.StartsWith("- ") -> ListItem(line.TrimStart('-').Trim())
-    | line -> PlainText line
+        let header = parseHeader line
+        { state with MarkdownContent = state.MarkdownContent @ [ header ] }
+    | line, _, _ when line.StartsWith("![") ->
+        let image = parseImage line
+        { state with MarkdownContent = state.MarkdownContent @ [ image ] }
+    | line, _, _ when line.StartsWith("- ") ->
+        { state with MarkdownContent = state.MarkdownContent @ [ ListItem(line.TrimStart('-').Trim()) ] }
+    | line, _, _ -> { state with MarkdownContent = state.MarkdownContent @ [ PlainText line ] }
 
 let private elementToHtml =
     function
@@ -179,6 +180,7 @@ let private elementToHtml =
 let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
 
     let state = { Meta = Map.empty; HtmlContent = []; IsInMeta = false; IsInCode = false }
+    let parsingState = { IsInMeta = false; IsInCode = false; MarkdownContent = [] }
 
     let processMetaContent (state: ConversionState) (key: string) (value: string) =
         let newMeta =
@@ -195,18 +197,24 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
         | MetaMarker, _, _ -> { state with IsInMeta = not state.IsInMeta }
         | MetaContent(key, value), true, _ -> processMetaContent state key value
         | CodeBlockMarker, _, _ ->
-            let html = if state.IsInCode then "</code></pre>" else "<pre><code>"
+            let html =
+                if state.IsInCode then
+                    $"{Environment.NewLine}</code></pre>"
+                else
+                    $"{Environment.NewLine}<pre><code>"
 
             { state with
                 IsInCode = not state.IsInCode
-                HtmlContent = html :: state.HtmlContent }
+                HtmlContent = Environment.NewLine :: html :: state.HtmlContent }
         | CodeContent(content), _, true ->
-            { state with
-                HtmlContent = (elementToHtml (CodeContent content)) :: state.HtmlContent }
+            { state with HtmlContent = (elementToHtml (CodeContent content)) :: state.HtmlContent }
         | _, false, false -> { state with HtmlContent = (elementToHtml element) :: state.HtmlContent }
         | _ -> state
 
-    let finalState = markdown |> Array.map parseLine |> Array.fold folder state
+    let finalState =
+        markdown
+        |> Array.fold parseLine parsingState
+        |> fun x -> x.MarkdownContent |> List.toArray |> Array.fold folder state
 
     let meta =
         { Title = Map.tryFind "title" finalState.Meta |> Option.defaultValue ""
@@ -218,5 +226,11 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
             |> Option.defaultValue []
           Url = Map.tryFind "url" finalState.Meta |> Option.defaultValue "" }
 
-    { Meta = meta
-      HtmlContent = finalState.HtmlContent |> List.rev |> String.concat "" }
+    { Meta = meta; HtmlContent = finalState.HtmlContent |> List.rev |> String.concat "" }
+
+
+// todo: code block doesnt work correctly
+// todo: bold text doesnt work correctly
+// todo: each sentence starts with a new line (wrong behavior)
+// todo: minor. code starts from space symbol
+// todo: a link doesn't work, despite the fact they look correct
