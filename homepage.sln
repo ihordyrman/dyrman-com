@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "homepage", "homepage", "{13EB212B-754E-40AC-B323-83C5E8F55A5C}"
+	ProjectSection(SolutionItems) = preProject
+		homepage\app.css = homepage\app.css
+		homepage\index.html = homepage\index.html
+		homepage\favicon.ico = homepage\favicon.ico
+	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NotesGenerator", "NotesGenerator\NotesGenerator.fsproj", "{91B2D122-4338-4A4E-95B4-7E8E654889E5}"
 EndProject
