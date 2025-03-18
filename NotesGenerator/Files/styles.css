@@ -1,0 +1,145 @@
+﻿@import 'bootstrap.min.css';
+
+:root {
+    --code: #EFEFE9;
+    --dark-text: #3B4252;
+    --grey-text: #707b8f;
+    --0: #F1F1E9;
+    --1: #EDEDE5;
+    --2: #EAEAE2;
+    --3: #E6E6DD;
+}
+
+html,
+body {
+    height: 100%;
+    background-color: var(--3);
+}
+
+@font-face {
+    font-family: Bahnschrift;
+    src: url('Bahnschrift.ttf') format('truetype');
+}
+
+body {
+    margin: 0;
+    font-family: Bahnschrift, Verdana, sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--0);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--3);
+}
+
+.content-wrapper {
+    line-height: 1.4;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 30px 25px;
+}
+
+.header-info {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 250px;
+    padding: 0 20px;
+    position: relative;
+    font-weight: bold;
+    text-align: center;
+    color: var(--dark-text);
+    background-color: var(--0);
+}
+
+.more-info {
+    background-color: var(--1);
+    color: var(--dark-text);
+}
+
+.skills {
+    background-color: var(--2);
+    color: var(--dark-text);
+}
+
+.contact {
+    color: var(--dark-text);
+    background-color: var(--3);
+}
+
+a:link {
+    color: var(--dark-text);
+    text-decoration: underline;
+}
+
+a:visited {
+    color: var(--dark-text);
+}
+
+button,
+a {
+    text-decoration: none;
+    color: var(--dark-text);
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.navbar {
+    background-color: var(--1);
+    position: static;
+}
+
+.navbar a {
+    color: var(--dark-text);
+    text-decoration: none;
+    padding-left: 10px;
+}
+
+a:hover {
+    color: var(--grey-text);
+    transition: color 0.3s;
+}
+
+.navbar a {
+    padding-right: 10px;
+}
+
+pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+pre {
+    background-color: var(--code);
+    border-left: 3px solid var(--dark-text);
+}
+
+code {
+    border-radius: 3px;
+    color: var(--dark-text);
+    font-family: monospace;
+    padding: 0.2em 0.4em;
+}
