@@ -39,9 +39,9 @@ let private finalizeLink url state =
 let private tokensToHtml tokens =
     let rec convertToken =
         function
-        | Text text -> System.Web.HttpUtility.HtmlEncode text
-        | Bold text -> $"<b>{text}</b>" |> System.Web.HttpUtility.HtmlEncode
-        | Code text -> $"<code>{text}</code>" |> System.Web.HttpUtility.HtmlEncode
+        | Text text -> text
+        | Bold text -> $"<b>{text}</b>"
+        | Code text -> $"<code>{text}</code>"
         | Link(text, url) -> $"<a href=\"{url}\">{text}</a>" |> System.Web.HttpUtility.HtmlEncode
 
     tokens |> List.rev |> List.map convertToken |> String.concat ""
@@ -56,10 +56,10 @@ let rec private parseText (text: char list) (state: ProcessingState) =
         | s when s.CurrentText.Length > 0 -> appendToken (Text state.CurrentText) state
         | _ -> state
 
-    | '*' :: '*' :: rest when not state.IsCode ->
+    | '*' :: '*' :: rest when not state.IsBold && not state.IsCode ->
         let newState =
             match state with
-            | s when s.CurrentText.Length > 0 -> appendToken (Text state.CurrentText) state
+            | s when s.CurrentText.Length > 0 -> appendToken (Bold state.CurrentText) state
             | _ -> state
 
         parseText rest { newState with IsBold = not state.IsBold }
@@ -77,6 +77,18 @@ let rec private parseText (text: char list) (state: ProcessingState) =
         parseText rest { newState with IsCode = true }
 
     | '`' :: '`' :: '`' :: rest when state.IsCode ->
+        let newState = finalizeCode state
+        parseText rest { newState with IsCode = false }
+
+    | '`' :: rest when not state.IsCode ->
+        let newState =
+            match state with
+            | s when s.CurrentText.Length > 0 -> appendToken (Text state.CurrentText) state
+            | _ -> state
+
+        parseText rest { newState with IsCode = true }
+
+    | '`' :: rest when state.IsCode ->
         let newState = finalizeCode state
         parseText rest { newState with IsCode = false }
 
@@ -124,7 +136,7 @@ type ParsingState = { IsInMeta: bool; IsInCode: bool; MarkdownContent: MarkdownE
 let private parseMetaLine (line: string) =
     match line.Split(':') with
     | [| key; value |] -> MetaContent(key.Trim(), value.Trim())
-    | _ -> PlainText line
+    | _ -> failwith "Invalid meta line"
 
 let private parseHeader (line: string) =
     let headerLevel = line |> Seq.takeWhile ((=) '#') |> Seq.length |> min 6
@@ -141,10 +153,7 @@ let private parseLine (state: ParsingState) (line: string) : ParsingState =
     match (line.Trim(), state.IsInCode, state.IsInMeta) with
     | "---", _, false -> { IsInMeta = true; IsInCode = false; MarkdownContent = state.MarkdownContent @ [ MetaMarker ] }
     | "---", _, true -> { IsInMeta = false; IsInCode = false; MarkdownContent = state.MarkdownContent @ [ MetaMarker ] }
-    | _, _, true ->
-        let key = line.Split(':').[0].Trim()
-        let value = line.Split(':').[1].Trim()
-        { state with MarkdownContent = state.MarkdownContent @ [ MetaContent(key, value) ] }
+    | _, _, true -> { state with MarkdownContent = state.MarkdownContent @ [ parseMetaLine line ] }
     | "```", _, _ ->
         { IsInCode = not state.IsInCode
           IsInMeta = false
@@ -171,7 +180,7 @@ let private elementToHtml =
     | MetaMarker -> ""
     | MetaContent _ -> ""
     | CodeBlockMarker -> ""
-    | CodeContent content -> System.Web.HttpUtility.HtmlEncode(content) + System.Environment.NewLine
+    | CodeContent content -> content + Environment.NewLine
     | Image(alt, path) -> $"""<img src="{path}" alt="{alt}"/><br />"""
     | ListItem content -> $"<li>{processText content}</li>"
     | Header(level, content) -> $"<h{level}>{content}</h{level}>"
@@ -229,8 +238,6 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
     { Meta = meta; HtmlContent = finalState.HtmlContent |> List.rev |> String.concat "" }
 
 
-// todo: code block doesnt work correctly
-// todo: bold text doesnt work correctly
 // todo: each sentence starts with a new line (wrong behavior)
 // todo: minor. code starts from space symbol
 // todo: a link doesn't work, despite the fact they look correct

@@ -68,4 +68,4 @@ let ``If the string start with `  , it should be a code content`` () =
     let input = "`code content`"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<code>code content</code>", x.HtmlContent)
+    |> fun x -> Assert.Equal("<code>code content</code><br />", x.HtmlContent)
