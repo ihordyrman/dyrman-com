@@ -151,3 +151,8 @@ bootstrap/*
 font-awesome/*
 /public/bootstrap/
 /public/font-awesome/
+
+
+# Static files (while in development)
+/NotesGenerator/Outputs/
+/notes/

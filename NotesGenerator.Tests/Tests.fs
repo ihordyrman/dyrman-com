@@ -27,7 +27,7 @@ let ``If the string starts with ---, it should be a meta`` () =
     |> fun x -> assertValue x "Title" x.Meta.Title
     |> fun x -> assertValue x "url" x.Meta.Url
     |> fun x -> assertValue x "" x.HtmlContent
-    |> fun x -> Assert.Equal<string list>(["test"], x.Meta.Tags)
+    |> fun x -> Assert.Equal<string list>([ "test" ], x.Meta.Tags)
 
 [<Fact>]
 let ``If the string starts with ![ , it should be an image`` () =
@@ -41,10 +41,11 @@ let ``If the string starts with three ` , it should be a code block`` () =
     let input = [| "```"; "let x = 1"; "let y = 2"; "let z = x + y"; "```" |]
 
     let expected =
-        """<pre><code>let x = 1
+        """<pre><code>
+let x = 1
 let y = 2
 let z = x + y
-</code></pre>"""
+</code></pre><br />"""
 
     HtmlRenderer.convertMarkdownToHtml input |> fun x -> Assert.Equal(expected, x.HtmlContent)
 

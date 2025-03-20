@@ -134,9 +134,10 @@ type ConversionState = { Meta: Map<string, string>; HtmlContent: string list; Is
 type ParsingState = { IsInMeta: bool; IsInCode: bool; MarkdownContent: MarkdownElement list }
 
 let private parseMetaLine (line: string) =
-    match line.Split(':') with
-    | [| key; value |] -> MetaContent(key.Trim(), value.Trim())
-    | _ -> failwith "Invalid meta line"
+    let index = line.IndexOf ':'
+    let key = line.Substring(0, index).Trim()
+    let value = line.Substring(index + 1).Trim()
+    MetaContent(key, value)
 
 let private parseHeader (line: string) =
     let headerLevel = line |> Seq.takeWhile ((=) '#') |> Seq.length |> min 6
@@ -158,6 +159,7 @@ let private parseLine (state: ParsingState) (line: string) : ParsingState =
         { IsInCode = not state.IsInCode
           IsInMeta = false
           MarkdownContent = state.MarkdownContent @ [ CodeBlockMarker ] }
+    | line, true, _ -> { state with MarkdownContent = state.MarkdownContent @ [ CodeContent line ] }
     | line, _, _ when
         line.StartsWith("# ")
         || line.StartsWith("## ")
@@ -206,15 +208,10 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
         | MetaMarker, _, _ -> { state with IsInMeta = not state.IsInMeta }
         | MetaContent(key, value), true, _ -> processMetaContent state key value
         | CodeBlockMarker, _, _ ->
-            let html =
-                if state.IsInCode then
-                    $"{Environment.NewLine}</code></pre>"
-                else
-                    $"{Environment.NewLine}<pre><code>"
+            let html = if state.IsInCode then "</code></pre>" else "<pre><code>"
+            let newLine = if state.IsInCode then "<br />" else Environment.NewLine
 
-            { state with
-                IsInCode = not state.IsInCode
-                HtmlContent = Environment.NewLine :: html :: state.HtmlContent }
+            { state with IsInCode = not state.IsInCode; HtmlContent = newLine :: html :: state.HtmlContent }
         | CodeContent(content), _, true ->
             { state with HtmlContent = (elementToHtml (CodeContent content)) :: state.HtmlContent }
         | _, false, false -> { state with HtmlContent = (elementToHtml element) :: state.HtmlContent }
