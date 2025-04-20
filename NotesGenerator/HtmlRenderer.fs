@@ -150,12 +150,12 @@ let private parseImage (line: string) =
 
     Image(content, $"./Images/{content}")
 
-let private parseLine (state: ParsingState) (line: string) : ParsingState =
-    match (line.Trim(), state.IsInCode, state.IsInMeta) with
+let private parse (state: ParsingState) (line: string) : ParsingState =
+    match (line.TrimEnd(), state.IsInCode, state.IsInMeta) with
     | "---", _, false -> { IsInMeta = true; IsInCode = false; MarkdownContent = state.MarkdownContent @ [ MetaMarker ] }
     | "---", _, true -> { IsInMeta = false; IsInCode = false; MarkdownContent = state.MarkdownContent @ [ MetaMarker ] }
     | _, _, true -> { state with MarkdownContent = state.MarkdownContent @ [ parseMetaLine line ] }
-    | "```", _, _ ->
+    | line, _, _ when line.StartsWith "```" ->
         { IsInCode = not state.IsInCode
           IsInMeta = false
           MarkdownContent = state.MarkdownContent @ [ CodeBlockMarker ] }
@@ -181,16 +181,16 @@ let private elementToHtml =
     function
     | MetaMarker -> ""
     | MetaContent _ -> ""
-    | CodeBlockMarker -> ""
+    | CodeBlockMarker -> Environment.NewLine
     | CodeContent content -> content + Environment.NewLine
     | Image(alt, path) -> $"""<img src="{path}" alt="{alt}"/><br />"""
     | ListItem content -> $"<li>{processText content}</li>"
     | Header(level, content) -> $"<h{level}>{content}</h{level}>"
-    | PlainText content -> $"{processText content}<br />"
+    | PlainText content -> $"{processText content}<br />{Environment.NewLine}"
 
 let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
 
-    let state = { Meta = Map.empty; HtmlContent = []; IsInMeta = false; IsInCode = false }
+    let convertingState = { Meta = Map.empty; HtmlContent = []; IsInMeta = false; IsInCode = false }
     let parsingState = { IsInMeta = false; IsInCode = false; MarkdownContent = [] }
 
     let processMetaContent (state: ConversionState) (key: string) (value: string) =
@@ -203,13 +203,13 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
 
         { state with Meta = newMeta }
 
-    let folder (state: ConversionState) (element: MarkdownElement) =
+    let convert (state: ConversionState) (element: MarkdownElement) =
         match element, state.IsInMeta, state.IsInCode with
         | MetaMarker, _, _ -> { state with IsInMeta = not state.IsInMeta }
         | MetaContent(key, value), true, _ -> processMetaContent state key value
         | CodeBlockMarker, _, _ ->
             let html = if state.IsInCode then "</code></pre>" else "<pre><code>"
-            let newLine = if state.IsInCode then "<br />" else Environment.NewLine
+            let newLine = if state.IsInCode then $"<br />{Environment.NewLine}" else Environment.NewLine
 
             { state with IsInCode = not state.IsInCode; HtmlContent = newLine :: html :: state.HtmlContent }
         | CodeContent(content), _, true ->
@@ -219,8 +219,8 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
 
     let finalState =
         markdown
-        |> Array.fold parseLine parsingState
-        |> fun x -> x.MarkdownContent |> List.toArray |> Array.fold folder state
+        |> Array.fold parse parsingState
+        |> fun x -> x.MarkdownContent |> List.fold convert convertingState
 
     let meta =
         { Title = Map.tryFind "title" finalState.Meta |> Option.defaultValue ""

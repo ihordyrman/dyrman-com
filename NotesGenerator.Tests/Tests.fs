@@ -45,7 +45,7 @@ let ``If the string starts with three ` , it should be a code block`` () =
 let x = 1
 let y = 2
 let z = x + y
-</code></pre><br />"""
+</code></pre><br />""" + "\r\n"
 
     HtmlRenderer.convertMarkdownToHtml input |> fun x -> Assert.Equal(expected, x.HtmlContent)
 
@@ -54,14 +54,14 @@ let ``If the string starts with anything else, it should be a regular text`` () 
     let input = "Regular text"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("Regular text<br />", x.HtmlContent)
+    |> fun x -> Assert.Equal("Regular text<br />\r\n", x.HtmlContent)
 
 [<Fact>]
 let ``If the string starts with *, it should be a bold text`` () =
     let input = "**bold text**"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<b>bold text</b><br />", x.HtmlContent)
+    |> fun x -> Assert.Equal("<b>bold text</b><br />\r\n", x.HtmlContent)
 
 
 [<Fact>]
@@ -69,4 +69,39 @@ let ``If the string start with `  , it should be a code content`` () =
     let input = "`code content`"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<code>code content</code><br />", x.HtmlContent)
+    |> fun x -> Assert.Equal("<code>code content</code><br />\r\n", x.HtmlContent)
+
+[<Fact>]
+let ``Regular text with code block should be generated correctly`` () =
+    let input =
+        """Just a regular text
+
+```csharp
+WebApplicationBuilder builder = WebApplication.CreateBuilder();
+var currentAssembly = Assembly.GetExecutingAssembly();
+
+builder.Host.AddSerilog()
+    .AddMasterDbContext<AdminMasterDbContext, MasterDbContext>()
+    .AddKafka<Program>();
+```
+
+Another regular text"""
+
+    let expected =
+        """Just a regular text<br />
+<br />
+<pre><code>
+WebApplicationBuilder builder = WebApplication.CreateBuilder();
+var currentAssembly = Assembly.GetExecutingAssembly();
+
+builder.Host.AddSerilog()
+    .AddMasterDbContext<AdminMasterDbContext, MasterDbContext>()
+    .AddKafka<Program>();
+</code></pre><br />
+<br />
+Another regular text<br />""" + "\r\n"
+
+    input
+    |> fun x -> x.Split '\n'
+    |> HtmlRenderer.convertMarkdownToHtml
+    |> fun x -> Assert.Equal(expected, x.HtmlContent)
