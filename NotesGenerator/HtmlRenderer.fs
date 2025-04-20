@@ -41,8 +41,8 @@ let private tokensToHtml tokens =
         function
         | Text text -> text
         | Bold text -> $"<b>{text}</b>"
-        | Code text -> $"<code>{text}</code>"
-        | Link(text, url) -> $"<a href=\"{url}\">{text}</a>" |> System.Web.HttpUtility.HtmlEncode
+        | Code text -> text |> System.Web.HttpUtility.HtmlEncode |> (fun code -> $"<code>{code}</code>")
+        | Link(text, url) -> $"<a href=\"{url}\">{text}</a>"
 
     tokens |> List.rev |> List.map convertToken |> String.concat ""
 
@@ -159,7 +159,9 @@ let private parse (state: ParsingState) (line: string) : ParsingState =
         { IsInCode = not state.IsInCode
           IsInMeta = false
           MarkdownContent = state.MarkdownContent @ [ CodeBlockMarker ] }
-    | line, true, _ -> { state with MarkdownContent = state.MarkdownContent @ [ CodeContent line ] }
+    | line, true, _ ->
+        let encodedLine = System.Web.HttpUtility.HtmlEncode line
+        { state with MarkdownContent = state.MarkdownContent @ [ CodeContent encodedLine ] }
     | line, _, _ when
         line.StartsWith("# ")
         || line.StartsWith("## ")
@@ -233,8 +235,3 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
           Url = Map.tryFind "url" finalState.Meta |> Option.defaultValue "" }
 
     { Meta = meta; HtmlContent = finalState.HtmlContent |> List.rev |> String.concat "" }
-
-
-// todo: each sentence starts with a new line (wrong behavior)
-// todo: minor. code starts from space symbol
-// todo: a link doesn't work, despite the fact they look correct

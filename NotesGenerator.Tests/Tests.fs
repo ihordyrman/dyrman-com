@@ -45,7 +45,8 @@ let ``If the string starts with three ` , it should be a code block`` () =
 let x = 1
 let y = 2
 let z = x + y
-</code></pre><br />""" + "\r\n"
+</code></pre><br />"""
+        + "\r\n"
 
     HtmlRenderer.convertMarkdownToHtml input |> fun x -> Assert.Equal(expected, x.HtmlContent)
 
@@ -99,9 +100,18 @@ builder.Host.AddSerilog()
     .AddKafka<Program>();
 </code></pre><br />
 <br />
-Another regular text<br />""" + "\r\n"
+Another regular text<br />"""
+        + "\r\n"
 
     input
     |> fun x -> x.Split '\n'
     |> HtmlRenderer.convertMarkdownToHtml
-    |> fun x -> Assert.Equal(expected, x.HtmlContent)
+    |> fun x -> Assert.Equal(expected, (x.HtmlContent |> System.Web.HttpUtility.HtmlDecode))
+
+
+[<Fact>]
+let ``Link should be displayed correctly`` () =
+    let input = "text with [url](https://google.com)"
+    let expected = """text with <a href="https://google.com">url</a><br />""" + "\r\n"
+
+    HtmlRenderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)
