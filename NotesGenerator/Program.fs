@@ -4,11 +4,11 @@ let environment = System.Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"
 
 let solutionFolder =
     match environment with
-    | "Development" -> @"C:\Projects\homepage"
+    | "Development" -> @"~/projects/homepage"
     | "Production" -> "."
     | _ -> failwith "Environment variable DOTNET_ENVIRONMENT is not set to Development"
 
-Directory.GetFiles(@$"{solutionFolder}\notes\", "*.md", SearchOption.AllDirectories)
+Directory.GetFiles(@$"{solutionFolder}/notes/", "*.md", SearchOption.AllDirectories)
 |> fun file ->
     printfn $"{file.Length}"
     file
@@ -19,7 +19,7 @@ Directory.GetFiles(@$"{solutionFolder}\notes\", "*.md", SearchOption.AllDirector
         HtmlTemplates.getHtmlFromTemplate content.Meta.Title content.Meta.Date content.HtmlContent
 
     File.WriteAllText(
-        @$"{solutionFolder}\NotesGenerator\Outputs\{content.Meta.Path}.html",
+        @$"{solutionFolder}/NotesGenerator/Outputs/{content.Meta.Path}.html",
         htmlTemplate,
         System.Text.Encoding.UTF8
     )
@@ -27,10 +27,10 @@ Directory.GetFiles(@$"{solutionFolder}\notes\", "*.md", SearchOption.AllDirector
     printfn $"{content}"
     ())
 
-Directory.GetFiles(@$"{solutionFolder}\NotesGenerator\Outputs\Images\", "*", SearchOption.AllDirectories)
+Directory.GetFiles(@$"{solutionFolder}/NotesGenerator/Outputs/Images/", "*", SearchOption.AllDirectories)
 |> Array.iter (fun file -> File.Delete(file))
 
-Directory.GetFiles(@$"{solutionFolder}\notes\Images\", "*", SearchOption.AllDirectories)
+Directory.GetFiles(@$"{solutionFolder}/notes/Images/", "*", SearchOption.AllDirectories)
 |> Array.iter (fun file ->
     let fileName = Path.GetFileName file
-    File.Copy(file, $@"{solutionFolder}\NotesGenerator\Outputs\Images\{fileName}", true))
+    File.Copy(file, $@"{solutionFolder}/NotesGenerator/Outputs/Images/{fileName}", true))
