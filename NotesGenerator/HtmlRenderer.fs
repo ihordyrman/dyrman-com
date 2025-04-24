@@ -16,7 +16,9 @@ type ProcessingState =
       IsLink: bool
       LinkText: string option }
 
-let private appendToken token state = { state with Tokens = token :: state.Tokens; CurrentText = "" }
+let empty = String.Empty
+
+let private appendToken token state = { state with Tokens = token :: state.Tokens; CurrentText = empty }
 let private appendChar ch state = { state with CurrentText = state.CurrentText + string ch }
 
 let private finalizeBold state =
@@ -47,7 +49,12 @@ let private tokensToHtml tokens =
     tokens |> List.rev |> List.map convertToken |> String.concat ""
 
 let state =
-    { Tokens = []; CurrentText = ""; IsBold = false; IsCode = false; IsLink = false; LinkText = None }
+    { Tokens = []
+      CurrentText = empty
+      IsBold = false
+      IsCode = false
+      IsLink = false
+      LinkText = None }
 
 let rec private parseText (text: char list) (state: ProcessingState) =
     match text with
@@ -114,7 +121,7 @@ let processText (markdown: string) =
     markdown.ToCharArray()
     |> Array.toList
     |> fun chars -> parseText chars state
-    |> fun state -> state.Tokens
+    |> _.Tokens
     |> tokensToHtml
 
 type Meta = { Title: string; Date: string; Path: string; Tags: string list; Url: string }
@@ -147,7 +154,7 @@ let private parseHeader (line: string) =
     Header(headerLevel, content)
 
 let private parseImage (line: string) =
-    let content = line.Trim() |> fun s -> s.TrimStart('!', '[').TrimEnd(']')
+    let content = line.Trim() |> _.TrimStart('!', '[').TrimEnd(']')
 
     Image(content, $"./Images/{content}")
 
@@ -182,9 +189,9 @@ let private parse (state: ParsingState) (line: string) : ParsingState =
 
 let private elementToHtml =
     function
-    | MetaMarker -> ""
-    | MetaContent _ -> ""
-    | CodeBlockMarker -> Environment.NewLine
+    | MetaMarker -> empty
+    | MetaContent _ -> empty
+    | CodeBlockMarker -> empty
     | CodeContent content -> content + Environment.NewLine
     | Image(alt, path) -> $"""<img src="{path}" alt="{alt}"/><br />"""
     | ListItem content -> $"<li>{processText content}</li>"
@@ -200,7 +207,7 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
         let newMeta =
             match key.ToLower() with
             | "tags" ->
-                let tags = value.Split(',') |> Array.map (fun t -> t.Trim()) |> String.concat ", "
+                let tags = value.Split(',') |> Array.map _.Trim() |> String.concat ", "
                 state.Meta.Add(key, tags)
             | _ -> state.Meta.Add(key, value)
 
@@ -212,11 +219,10 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
         | MetaContent(key, value), true, _ -> processMetaContent state key value
         | CodeBlockMarker, _, _ ->
             let html = if state.IsInCode then "</code></pre>" else "<pre><code>"
-            let newLine = if state.IsInCode then $"<br />{Environment.NewLine}" else Environment.NewLine
+            let newLine = if state.IsInCode then $"<br />{Environment.NewLine}" else empty
 
             { state with IsInCode = not state.IsInCode; HtmlContent = newLine :: html :: state.HtmlContent }
-        | CodeContent(content), _, true ->
-            { state with HtmlContent = (elementToHtml (CodeContent content)) :: state.HtmlContent }
+        | CodeContent(content), _, true -> { state with HtmlContent = (elementToHtml (CodeContent content)) :: state.HtmlContent }
         | _, false, false -> { state with HtmlContent = (elementToHtml element) :: state.HtmlContent }
         | _ -> state
 
@@ -226,13 +232,13 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
         |> fun x -> x.MarkdownContent |> List.fold convert convertingState
 
     let meta =
-        { Title = Map.tryFind "title" finalState.Meta |> Option.defaultValue ""
-          Date = Map.tryFind "date" finalState.Meta |> Option.defaultValue ""
-          Path = Map.tryFind "path" finalState.Meta |> Option.defaultValue ""
+        { Title = Map.tryFind "title" finalState.Meta |> Option.defaultValue empty
+          Date = Map.tryFind "date" finalState.Meta |> Option.defaultValue empty
+          Path = Map.tryFind "path" finalState.Meta |> Option.defaultValue empty
           Tags =
             Map.tryFind "tags" finalState.Meta
-            |> Option.map (fun t -> t.Split(',') |> Array.map (fun s -> s.Trim()) |> Array.toList)
+            |> Option.map (fun t -> t.Split(',') |> Array.map _.Trim() |> Array.toList)
             |> Option.defaultValue []
-          Url = Map.tryFind "url" finalState.Meta |> Option.defaultValue "" }
+          Url = Map.tryFind "url" finalState.Meta |> Option.defaultValue empty }
 
-    { Meta = meta; HtmlContent = finalState.HtmlContent |> List.rev |> String.concat "" }
+    { Meta = meta; HtmlContent = finalState.HtmlContent |> List.rev |> String.concat empty }

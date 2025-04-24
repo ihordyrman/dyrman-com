@@ -63,7 +63,7 @@ let ``If the string starts with *, it should be a bold text`` () =
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal("<b>bold text</b><br />\r\n", x.HtmlContent)
-    
+
 [<Fact>]
 let ``If the string contains *, it should be a bold text`` () =
     let input = "not bold **bold**"
