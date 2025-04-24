@@ -59,7 +59,8 @@ let rec private parseText (text: char list) (state: ProcessingState) =
     | '*' :: '*' :: rest when not state.IsBold && not state.IsCode ->
         let newState =
             match state with
-            | s when s.CurrentText.Length > 0 -> appendToken (Bold state.CurrentText) state
+            // save current text before processing bold
+            | s when s.CurrentText.Length > 0 -> appendToken (Text state.CurrentText) state
             | _ -> state
 
         parseText rest { newState with IsBold = not state.IsBold }
