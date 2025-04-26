@@ -1,0 +1,10 @@
+﻿<Solution>
+  <Folder Name="/homepage/">
+    <File Path="homepage\app.css" />
+    <File Path="homepage\index.html" />
+    <File Path="homepage\favicon.ico" />
+  </Folder>
+  <Folder Name="/notes/" />
+  <Project Path="NotesGenerator.Tests\NotesGenerator.Tests.fsproj" Type="Classic F#" />
+  <Project Path="NotesGenerator\NotesGenerator.fsproj" Type="Classic F#" />
+</Solution>
