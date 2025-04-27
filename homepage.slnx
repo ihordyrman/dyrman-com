@@ -1,8 +1,8 @@
 ﻿<Solution>
   <Folder Name="/homepage/">
-    <File Path="homepage\app.css" />
-    <File Path="homepage\index.html" />
     <File Path="homepage\favicon.ico" />
+    <File Path="homepage\index.html" />
+    <File Path="homepage\app.css" />
   </Folder>
   <Folder Name="/notes/" />
   <Project Path="NotesGenerator.Tests\NotesGenerator.Tests.fsproj" Type="Classic F#" />

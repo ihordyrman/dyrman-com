@@ -2,6 +2,8 @@ module Tests
 
 open Xunit
 
+let concat elements = elements |> String.concat "\n" |> (fun x -> x + "\r\n")
+
 [<Fact>]
 let ``If the string starts with #, it should be a header`` () =
     let input = "# Header"
@@ -12,9 +14,9 @@ let ``If the string starts with #, it should be a header`` () =
 [<Fact>]
 let ``If the string starts with - , it should be a list item`` () =
     let input = "- List item"
+    let expected = [| "<ul>"; "<li>List item</li>"; "</ul>" |] |> concat
 
-    HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<li>List item</li>", x.HtmlContent)
+    HtmlRenderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)
 
 [<Fact>]
 let ``If the string starts with ---, it should be a meta`` () =
@@ -22,7 +24,13 @@ let ``If the string starts with ---, it should be a meta`` () =
         Assert.Equal(b, c)
         a
 
-    HtmlRenderer.convertMarkdownToHtml [| "---"; "title: Title"; "date: 2024-01-01"; "url: url"; "tags: test"; "---" |]
+    HtmlRenderer.convertMarkdownToHtml
+        [| "---"
+           "title: Title"
+           "date: 2024-01-01"
+           "url: url"
+           "tags: test"
+           "---" |]
     |> fun x -> assertValue x "2024-01-01" x.Meta.Date
     |> fun x -> assertValue x "Title" x.Meta.Title
     |> fun x -> assertValue x "url" x.Meta.Url
@@ -38,15 +46,20 @@ let ``If the string starts with ![ , it should be an image`` () =
 
 [<Fact>]
 let ``If the string starts with three ` , it should be a code block`` () =
-    let input = [| "```"; "let x = 1"; "let y = 2"; "let z = x + y"; "```" |]
+    let input =
+        [| "```"
+           "let x = 1"
+           "let y = 2"
+           "let z = x + y"
+           "```" |]
 
     let expected =
-        """<pre><code>
-let x = 1
-let y = 2
-let z = x + y
-</code></pre><br />"""
-        + "\r\n"
+        [| "<pre><code>"
+           "let x = 1"
+           "let y = 2"
+           "let z = x + y"
+           "</code></pre><br />" |]
+        |> concat
 
     HtmlRenderer.convertMarkdownToHtml input |> fun x -> Assert.Equal(expected, x.HtmlContent)
 
@@ -119,6 +132,6 @@ Another regular text<br />"""
 [<Fact>]
 let ``Link should be displayed correctly`` () =
     let input = "text with [url](https://google.com)"
-    let expected = """text with <a href="https://google.com">url</a><br />""" + "\r\n"
+    let expected = [| """text with <a href="https://google.com">url</a><br />""" |] |> concat
 
     HtmlRenderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)

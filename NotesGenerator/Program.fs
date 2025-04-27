@@ -4,7 +4,7 @@ let environment = System.Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"
 
 let solutionFolder =
     match environment with
-    | "Development" -> "/home/broken/projects/homepage/"
+    | "Development" -> "C:/Projects/homepage/"
     | "Production" -> "."
     | _ -> failwith "Environment variable DOTNET_ENVIRONMENT is not set to Development"
 
