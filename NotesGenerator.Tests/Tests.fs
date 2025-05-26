@@ -1,8 +1,10 @@
 module Tests
 
+open System
 open Xunit
+open NotesGenerator.Types
 
-let concat elements = elements |> String.concat "\n" |> (fun x -> x + "\r\n")
+let concat elements = elements |> String.concat Environment.NewLine |> (fun x -> x + Environment.NewLine)
 
 [<Fact>]
 let ``If the string starts with #, it should be a header`` () =
@@ -20,7 +22,7 @@ let ``If the string starts with - , it should be a list item`` () =
 
 [<Fact>]
 let ``If the string starts with ---, it should be a meta`` () =
-    let assertValue (a: HtmlRenderer.HtmlPage) (b: string) (c: string) =
+    let assertValue (a: HtmlPage) (b: string) (c: string) =
         Assert.Equal(b, c)
         a
 
@@ -68,21 +70,21 @@ let ``If the string starts with anything else, it should be a regular text`` () 
     let input = "Regular text"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("Regular text<br />\r\n", x.HtmlContent)
+    |> fun x -> Assert.Equal($"Regular text<br />{Environment.NewLine}", x.HtmlContent)
 
 [<Fact>]
 let ``If the string starts with *, it should be a bold text`` () =
     let input = "**bold text**"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<b>bold text</b><br />\r\n", x.HtmlContent)
+    |> fun x -> Assert.Equal($"<b>bold text</b><br />{Environment.NewLine}", x.HtmlContent)
 
 [<Fact>]
 let ``If the string contains *, it should be a bold text`` () =
     let input = "not bold **bold**"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("not bold <b>bold</b><br />\r\n", x.HtmlContent)
+    |> fun x -> Assert.Equal($"not bold <b>bold</b><br />{Environment.NewLine}", x.HtmlContent)
 
 
 [<Fact>]
@@ -90,7 +92,7 @@ let ``If the string start with `  , it should be a code content`` () =
     let input = "`code content`"
 
     HtmlRenderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<code>code content</code><br />\r\n", x.HtmlContent)
+    |> fun x -> Assert.Equal($"<code>code content</code><br />{Environment.NewLine}", x.HtmlContent)
 
 [<Fact>]
 let ``Regular text with code block should be generated correctly`` () =
@@ -121,10 +123,10 @@ builder.Host.AddSerilog()
 </code></pre><br />
 <br />
 Another regular text<br />"""
-        + "\r\n"
+        + Environment.NewLine
 
     input
-    |> fun x -> x.Split '\n'
+    |> fun x -> x.Split Environment.NewLine
     |> HtmlRenderer.convertMarkdownToHtml
     |> fun x -> Assert.Equal(expected, (x.HtmlContent |> System.Web.HttpUtility.HtmlDecode))
 

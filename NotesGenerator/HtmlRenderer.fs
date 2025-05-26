@@ -1,20 +1,7 @@
 ﻿module HtmlRenderer
 
 open System
-
-type Token =
-    | Text of string
-    | Bold of string
-    | Code of string
-    | Link of text: string * url: string
-
-type ProcessingState =
-    { Tokens: Token list
-      CurrentText: string
-      IsBold: bool
-      IsCode: bool
-      IsLink: bool
-      LinkText: string option }
+open NotesGenerator.Types
 
 let empty = String.Empty
 
@@ -124,23 +111,6 @@ let processText (markdown: string) =
     |> _.Tokens
     |> tokensToHtml
 
-type Meta = { Title: string; Date: string; Path: string; Tags: string list; Url: string }
-
-type MarkdownElement =
-    | MetaMarker
-    | MetaContent of key: string * value: string
-    | CodeBlockMarker
-    | CodeContent of string
-    | Image of alt: string * path: string
-    | ListItem of string
-    | Header of level: int * content: string
-    | PlainText of string
-
-type HtmlPage = { Meta: Meta; HtmlContent: string }
-
-type ConversionState = { Meta: Map<string, string>; HtmlContent: string list; IsInMeta: bool; IsInCode: bool }
-type ParsingState = { IsInMeta: bool; IsInCode: bool; MarkdownContent: MarkdownElement list }
-
 let private parseMetaLine (line: string) =
     let index = line.IndexOf ':'
     let key = line.Substring(0, index).Trim()
@@ -242,3 +212,5 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
           Url = Map.tryFind "url" finalState.Meta |> Option.defaultValue empty }
 
     { Meta = meta; HtmlContent = finalState.HtmlContent |> List.rev |> String.concat empty }
+
+// Tokenize -> Parse -> Transform

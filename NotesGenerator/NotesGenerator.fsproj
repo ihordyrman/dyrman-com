@@ -23,6 +23,8 @@
         <Content Include="Files\bootstrap.min.css">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Compile Include="Types.fs" />
+        <Compile Include="Lexer.fs" />
         <Compile Include="HtmlTemplates.fs" />
         <Compile Include="HtmlRenderer.fs" />
         <Compile Include="Program.fs" />
