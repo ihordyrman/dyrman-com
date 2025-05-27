@@ -6,7 +6,7 @@ open Xunit
 [<Fact>]
 let ``Empty line produces only NewLine`` () =
     let result = tokenize ""
-    Assert.Equal<MarkdownTokens list>([ NewLine ], result)
+    Assert.Equal<MarkdownToken list>([ NewLine ], result)
 
 [<Fact>]
 let ``Plain text produces Text tokens and NewLine`` () =
@@ -26,13 +26,13 @@ let ``Plain text produces Text tokens and NewLine`` () =
           Text "d"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Single hash creates HeaderMarker level 1`` () =
     let result = tokenize "# Title"
     let expected = [ HeaderMarker 1; Text " "; Text "T"; Text "i"; Text "t"; Text "l"; Text "e"; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Triple hash creates HeaderMarker level 3`` () =
@@ -51,7 +51,7 @@ let ``Triple hash creates HeaderMarker level 3`` () =
           Text "e"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Six hashes creates HeaderMarker level 6`` () =
@@ -73,7 +73,7 @@ let ``Six hashes creates HeaderMarker level 6`` () =
           Text "r"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``More than six hashes capped at level 6`` () =
@@ -95,13 +95,13 @@ let ``More than six hashes capped at level 6`` () =
           Text "y"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Triple dash creates MetaMarker`` () =
     let result = tokenize "---"
     let expected = [ MetaMarker; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Meta with content`` () =
@@ -110,43 +110,43 @@ let ``Meta with content`` () =
     let expected =
         [ MetaMarker; Text "c"; Text "o"; Text "n"; Text "t"; Text "e"; Text "n"; Text "t"; NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Dash space creates ListMarker`` () =
     let result = tokenize "- Item"
     let expected = [ ListMarker; Text "I"; Text "t"; Text "e"; Text "m"; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Dash without space is plain text`` () =
     let result = tokenize "-Item"
     let expected = [ Text "-"; Text "I"; Text "t"; Text "e"; Text "m"; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Triple backticks without language`` () =
     let result = tokenize "```"
     let expected = [ CodeBlockMarker None; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Triple backticks with language`` () =
     let result = tokenize "```fsharp"
     let expected = [ CodeBlockMarker(Some "fsharp"); NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Triple backticks with language and spaces`` () =
     let result = tokenize "```  python  "
     let expected = [ CodeBlockMarker(Some "python"); NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Double asterisk creates BoldMarker`` () =
     let result = tokenize "**bold**"
     let expected = [ BoldMarker; Text "b"; Text "o"; Text "l"; Text "d"; BoldMarker; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Text with bold in middle`` () =
@@ -169,13 +169,13 @@ let ``Text with bold in middle`` () =
           Text "d"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Single backtick creates CodeMarker`` () =
     let result = tokenize "`code`"
     let expected = [ CodeMarker; Text "c"; Text "o"; Text "d"; Text "e"; CodeMarker; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Text with inline code`` () =
@@ -206,7 +206,7 @@ let ``Text with inline code`` () =
           Text "n"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Header with bold text`` () =
@@ -230,7 +230,7 @@ let ``Header with bold text`` () =
           BoldMarker
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``List item with code`` () =
@@ -256,7 +256,7 @@ let ``List item with code`` () =
           CodeMarker
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Single asterisk is plain text`` () =
@@ -265,7 +265,7 @@ let ``Single asterisk is plain text`` () =
     let expected =
         [ Text "*"; Text "i"; Text "t"; Text "a"; Text "l"; Text "i"; Text "c"; Text "*"; NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Line starting with space and hash`` () =
@@ -287,13 +287,13 @@ let ``Line starting with space and hash`` () =
           Text "r"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Only spaces`` () =
     let result = tokenize "   "
     let expected = [ Text " "; Text " "; Text " "; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Long text line`` () =
@@ -301,7 +301,7 @@ let ``Long text line`` () =
     let result = tokenize longText
     let expectedTexts = List.replicate 100 (Text "a")
     let expected = expectedTexts @ [ NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Multiple bold markers`` () =
@@ -320,7 +320,7 @@ let ``Multiple bold markers`` () =
           BoldMarker
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Regular image at line start`` () =
@@ -350,7 +350,7 @@ let ``Regular image at line start`` () =
           ParenClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Local image at line start`` () =
@@ -372,7 +372,7 @@ let ``Local image at line start`` () =
           LocalImageEnd
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Local image takes precedence over regular image`` () =
@@ -394,7 +394,7 @@ let ``Local image takes precedence over regular image`` () =
           Text "r"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Regular image in middle of line`` () =
@@ -428,7 +428,7 @@ let ``Regular image in middle of line`` () =
           Text "e"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Local image in middle of line`` () =
@@ -456,7 +456,7 @@ let ``Local image in middle of line`` () =
           Text "e"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Square brackets tokenized correctly`` () =
@@ -476,7 +476,7 @@ let ``Square brackets tokenized correctly`` () =
           SquareBracketClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Parentheses tokenized correctly`` () =
@@ -499,7 +499,7 @@ let ``Parentheses tokenized correctly`` () =
           ParenClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Complete link structure`` () =
@@ -519,7 +519,7 @@ let ``Complete link structure`` () =
           ParenClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Link with bold text`` () =
@@ -546,7 +546,7 @@ let ``Link with bold text`` () =
           ParenClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Image with code in alt text`` () =
@@ -578,7 +578,7 @@ let ``Image with code in alt text`` () =
           ParenClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Incomplete image syntax`` () =
@@ -598,7 +598,7 @@ let ``Incomplete image syntax`` () =
           Text "e"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Incomplete local image`` () =
@@ -618,7 +618,7 @@ let ``Incomplete local image`` () =
           Text "e"
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Nested brackets`` () =
@@ -636,25 +636,25 @@ let ``Nested brackets`` () =
           LocalImageEnd
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Multiple closing brackets`` () =
     let result = tokenize "]]]"
     let expected = [ LocalImageEnd; SquareBracketClose; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Empty brackets`` () =
     let result = tokenize "[]"
     let expected = [ SquareBracketOpen; SquareBracketClose; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Empty parentheses`` () =
     let result = tokenize "()"
     let expected = [ ParenOpen; ParenClose; NewLine ]
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Image at start vs image in middle have different tokenization`` () =
@@ -688,8 +688,8 @@ let ``Image at start vs image in middle have different tokenization`` () =
           ParenClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(startExpected, startResult)
-    Assert.Equal<MarkdownTokens list>(middleExpected, middleResult)
+    Assert.Equal<MarkdownToken list>(startExpected, startResult)
+    Assert.Equal<MarkdownToken list>(middleExpected, middleResult)
 
 [<Fact>]
 let ``Complex markdown line with multiple elements`` () =
@@ -743,4 +743,4 @@ let ``Complex markdown line with multiple elements`` () =
           ParenClose
           NewLine ]
 
-    Assert.Equal<MarkdownTokens list>(expected, result)
+    Assert.Equal<MarkdownToken list>(expected, result)

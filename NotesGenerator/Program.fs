@@ -16,7 +16,7 @@ Directory.GetFiles(@$"{solutionFolder}/notes/", "*.md", SearchOption.AllDirector
     let content = File.ReadAllLines file |> Renderer.convertMarkdownToHtml
 
     let htmlTemplate =
-        Templates.getHtmlFromTemplate content.Meta.Title content.Meta.Date content.HtmlContent
+        Templates.note content.Meta.Title content.Meta.Date content.HtmlContent
 
     File.WriteAllText(
         @$"{solutionFolder}/NotesGenerator/Outputs/{content.Meta.Path}.html",

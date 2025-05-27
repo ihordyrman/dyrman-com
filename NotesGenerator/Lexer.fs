@@ -2,7 +2,7 @@ module NotesGenerator.Lexer
 
 open System
 
-type MarkdownTokens =
+type MarkdownToken =
     | Text of string
     | MetaMarker // ---
 
@@ -27,7 +27,7 @@ type MarkdownTokens =
     | ParenOpen // (
     | ParenClose // )
 
-type State = { Tokens: MarkdownTokens list; CurrentText: string }
+type State = { Tokens: MarkdownToken list; CurrentText: string }
 
 let (|Headers|_|) (line: string) =
     if line.StartsWith '#' then
@@ -154,7 +154,7 @@ let tokenize line =
         | ParenClose(rest) -> getTokens (cloneState state rest ParenClose)
         | text ->
             let rest = text.Substring 1
-            let character = text[..0]
+            let character = text.Substring(0, 1)
             getTokens (cloneState state rest (Text character))
 
     // check the rest of the line
