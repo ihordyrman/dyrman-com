@@ -25,8 +25,8 @@
         </Content>
         <Compile Include="Types.fs" />
         <Compile Include="Lexer.fs" />
-        <Compile Include="HtmlTemplates.fs" />
-        <Compile Include="HtmlRenderer.fs" />
+        <Compile Include="Templates.fs" />
+        <Compile Include="Renderer.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

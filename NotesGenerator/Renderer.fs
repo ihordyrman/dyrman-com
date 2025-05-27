@@ -1,4 +1,4 @@
-﻿module HtmlRenderer
+﻿module Renderer
 
 open System
 open NotesGenerator.Types

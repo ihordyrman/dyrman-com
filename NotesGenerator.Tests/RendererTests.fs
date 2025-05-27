@@ -1,4 +1,4 @@
-module Tests
+module RendererTests
 
 open System
 open Xunit
@@ -10,7 +10,7 @@ let concat elements = elements |> String.concat Environment.NewLine |> (fun x ->
 let ``If the string starts with #, it should be a header`` () =
     let input = "# Header"
 
-    HtmlRenderer.convertMarkdownToHtml [| input |]
+    Renderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal("<h1>Header</h1>", x.HtmlContent)
 
 [<Fact>]
@@ -18,7 +18,7 @@ let ``If the string starts with - , it should be a list item`` () =
     let input = "- List item"
     let expected = [| "<ul>"; "<li>List item</li>"; "</ul>" |] |> concat
 
-    HtmlRenderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)
+    Renderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)
 
 [<Fact>]
 let ``If the string starts with ---, it should be a meta`` () =
@@ -26,7 +26,7 @@ let ``If the string starts with ---, it should be a meta`` () =
         Assert.Equal(b, c)
         a
 
-    HtmlRenderer.convertMarkdownToHtml
+    Renderer.convertMarkdownToHtml
         [| "---"
            "title: Title"
            "date: 2024-01-01"
@@ -43,7 +43,7 @@ let ``If the string starts with ---, it should be a meta`` () =
 let ``If the string starts with ![ , it should be an image`` () =
     let input = "![[image.png]]"
 
-    HtmlRenderer.convertMarkdownToHtml [| input |]
+    Renderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal("<img src=\"./Images/image.png\" alt=\"image.png\"/><br />", x.HtmlContent)
 
 [<Fact>]
@@ -63,27 +63,27 @@ let ``If the string starts with three ` , it should be a code block`` () =
            "</code></pre><br />" |]
         |> concat
 
-    HtmlRenderer.convertMarkdownToHtml input |> fun x -> Assert.Equal(expected, x.HtmlContent)
+    Renderer.convertMarkdownToHtml input |> fun x -> Assert.Equal(expected, x.HtmlContent)
 
 [<Fact>]
 let ``If the string starts with anything else, it should be a regular text`` () =
     let input = "Regular text"
 
-    HtmlRenderer.convertMarkdownToHtml [| input |]
+    Renderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal($"Regular text<br />{Environment.NewLine}", x.HtmlContent)
 
 [<Fact>]
 let ``If the string starts with *, it should be a bold text`` () =
     let input = "**bold text**"
 
-    HtmlRenderer.convertMarkdownToHtml [| input |]
+    Renderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal($"<b>bold text</b><br />{Environment.NewLine}", x.HtmlContent)
 
 [<Fact>]
 let ``If the string contains *, it should be a bold text`` () =
     let input = "not bold **bold**"
 
-    HtmlRenderer.convertMarkdownToHtml [| input |]
+    Renderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal($"not bold <b>bold</b><br />{Environment.NewLine}", x.HtmlContent)
 
 
@@ -91,7 +91,7 @@ let ``If the string contains *, it should be a bold text`` () =
 let ``If the string start with `  , it should be a code content`` () =
     let input = "`code content`"
 
-    HtmlRenderer.convertMarkdownToHtml [| input |]
+    Renderer.convertMarkdownToHtml [| input |]
     |> fun x -> Assert.Equal($"<code>code content</code><br />{Environment.NewLine}", x.HtmlContent)
 
 [<Fact>]
@@ -127,7 +127,7 @@ Another regular text<br />"""
 
     input
     |> fun x -> x.Split Environment.NewLine
-    |> HtmlRenderer.convertMarkdownToHtml
+    |> Renderer.convertMarkdownToHtml
     |> fun x -> Assert.Equal(expected, (x.HtmlContent |> System.Web.HttpUtility.HtmlDecode))
 
 
@@ -136,4 +136,4 @@ let ``Link should be displayed correctly`` () =
     let input = "text with [url](https://google.com)"
     let expected = [| """text with <a href="https://google.com">url</a><br />""" |] |> concat
 
-    HtmlRenderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)
+    Renderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)

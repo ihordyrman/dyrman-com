@@ -1,5 +1,5 @@
 ﻿[<RequireQualifiedAccess>]
-module HtmlTemplates
+module Templates
 
 let getHtmlFromTemplate title date htmlContent =
     $"""

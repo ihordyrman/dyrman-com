@@ -63,19 +63,68 @@ let (|CodeBlock|_|) (line: string) =
 
 let (|Bold|_|) (text: string) =
     if text.StartsWith "**" then
-        let rest = text.Substring(2)
+        let rest = text.Substring 2
         Some(rest)
     else
         None
 
 let (|Code|_|) (line: string) =
     if line.StartsWith "`" then
-        let rest = line.Substring(1)
+        let rest = line.Substring 1
         Some(rest)
     else
         None
 
-let tokenize (line: string) : MarkdownTokens list =
+let (|Image|_|) (text: string) =
+    if text.StartsWith "![" then
+        let rest = text.Substring 2
+        Some(rest)
+    else
+        None
+
+let (|LocalImageStart|_|) (text: string) =
+    if text.StartsWith "![[" then
+        let rest = text.Substring 3
+        Some(rest)
+    else
+        None
+
+let (|LocalImageEnd|_|) (text: string) =
+    if text.StartsWith "]]" then
+        let rest = text.Substring 2
+        Some(rest)
+    else
+        None
+
+let (|SquareBracketOpen|_|) (text: string) =
+    if text.StartsWith "[" then
+        let rest = text.Substring 1
+        Some(rest)
+    else
+        None
+
+let (|SquareBracketClose|_|) (text: string) =
+    if text.StartsWith "]" then
+        let rest = text.Substring 1
+        Some(rest)
+    else
+        None
+
+let (|ParenOpen|_|) (text: string) =
+    if text.StartsWith "(" then
+        let rest = text.Substring 1
+        Some(rest)
+    else
+        None
+
+let (|ParenClose|_|) (text: string) =
+    if text.StartsWith ")" then
+        let rest = text.Substring 1
+        Some(rest)
+    else
+        None
+
+let tokenize line =
 
     let cloneState state text marker = { CurrentText = text; Tokens = state.Tokens @ [ marker ] }
     let initialState = { Tokens = []; CurrentText = line }
@@ -87,19 +136,27 @@ let tokenize (line: string) : MarkdownTokens list =
         | List(rest) -> (cloneState initialState rest ListMarker)
         | Headers(level, rest) -> (cloneState initialState rest (HeaderMarker level))
         | CodeBlock(lang) -> (cloneState initialState "" (CodeBlockMarker lang))
+        | LocalImageStart(rest) -> (cloneState initialState rest LocalImageStart)
+        | Image(rest) -> (cloneState initialState rest ImageMarker)
         | _ -> initialState
 
-    // check the rest of the line
     let rec getTokens (state: State) =
         match state.CurrentText with
         | "" -> state
         | Bold(rest) -> getTokens (cloneState state rest BoldMarker)
         | Code(rest) -> getTokens (cloneState state rest CodeMarker)
+        | LocalImageStart(rest) -> getTokens (cloneState state rest LocalImageStart)
+        | Image(rest) -> getTokens (cloneState state rest ImageMarker)
+        | LocalImageEnd(rest) -> getTokens (cloneState state rest LocalImageEnd)
+        | SquareBracketOpen(rest) -> getTokens (cloneState state rest SquareBracketOpen)
+        | SquareBracketClose(rest) -> getTokens (cloneState state rest SquareBracketClose)
+        | ParenOpen(rest) -> getTokens (cloneState state rest ParenOpen)
+        | ParenClose(rest) -> getTokens (cloneState state rest ParenClose)
         | text ->
             let rest = text.Substring 1
             let character = text[..0]
             getTokens (cloneState state rest (Text character))
 
+    // check the rest of the line
     let finalState = getTokens state
-    finalState.Tokens @ [NewLine]
-    
+    finalState.Tokens @ [ NewLine ]
