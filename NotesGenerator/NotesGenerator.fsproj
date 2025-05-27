@@ -27,6 +27,7 @@
         <Compile Include="Lexer.fs" />
         <Compile Include="Templates.fs" />
         <Compile Include="Renderer.fs" />
+        <Compile Include="Parser.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

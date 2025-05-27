@@ -34,3 +34,12 @@ Directory.GetFiles(@$"{solutionFolder}/notes/Images/", "*", SearchOption.AllDire
 |> Array.iter (fun file ->
     let fileName = Path.GetFileName file
     File.Copy(file, $@"{solutionFolder}/NotesGenerator/Outputs/Images/{fileName}", true))
+
+// Tokenize -> Parse -> Render
+// "# **Bold** title" 
+//     ↓ Lexer
+// [HeaderMarker 1; BoldMarker; Text "B"; Text "o"...; BoldMarker; ...]
+//     ↓ Parser  
+// Header(1, [Bold([Text "Bold"]); Text " title"])
+//     ↓ Renderer
+// "<h1><strong>Bold</strong> title</h1>"

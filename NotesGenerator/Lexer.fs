@@ -4,28 +4,20 @@ open System
 
 type MarkdownToken =
     | Text of string
-    | MetaMarker // ---
-
-    // formatting
+    | MetaMarker
     | NewLine
-    | BoldMarker // **
-    | HeaderMarker of int // #, ##, ### ...
-    | ListMarker // -
-
-    // code
-    | CodeBlockMarker of string option // ``` or ```yaml
-    | CodeMarker // `
-
-    // images
-    | ImageMarker // ![
-    | LocalImageStart // ![[
-    | LocalImageEnd // ]]
-
-    // links
-    | SquareBracketOpen // [
-    | SquareBracketClose // ]
-    | ParenOpen // (
-    | ParenClose // )
+    | BoldMarker
+    | HeaderMarker of level: int
+    | ListMarker
+    | CodeBlockMarker of language: string option
+    | CodeMarker
+    | ImageMarker
+    | LocalImageStart
+    | LocalImageEnd
+    | SquareBracketOpen
+    | SquareBracketClose
+    | ParenOpen
+    | ParenClose
 
 type State = { Tokens: MarkdownToken list; CurrentText: string }
 
@@ -132,12 +124,12 @@ let tokenize line =
     // check elements on the beginning
     let state =
         match line with
-        | Meta(rest) -> (cloneState initialState rest MetaMarker)
-        | List(rest) -> (cloneState initialState rest ListMarker)
-        | Headers(level, rest) -> (cloneState initialState rest (HeaderMarker level))
-        | CodeBlock(lang) -> (cloneState initialState "" (CodeBlockMarker lang))
-        | LocalImageStart(rest) -> (cloneState initialState rest LocalImageStart)
-        | Image(rest) -> (cloneState initialState rest ImageMarker)
+        | Meta(rest) -> cloneState initialState rest MetaMarker
+        | List(rest) -> cloneState initialState rest ListMarker
+        | Headers(level, rest) -> cloneState initialState rest (HeaderMarker level)
+        | CodeBlock(lang) -> cloneState initialState "" (CodeBlockMarker lang)
+        | LocalImageStart(rest) -> cloneState initialState rest LocalImageStart
+        | Image(rest) -> cloneState initialState rest ImageMarker
         | _ -> initialState
 
     let rec getTokens (state: State) =

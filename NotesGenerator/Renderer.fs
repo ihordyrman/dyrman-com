@@ -212,5 +212,3 @@ let convertMarkdownToHtml (markdown: string[]) : HtmlPage =
           Url = Map.tryFind "url" finalState.Meta |> Option.defaultValue empty }
 
     { Meta = meta; HtmlContent = finalState.HtmlContent |> List.rev |> String.concat empty }
-
-// Tokenize -> Parse -> Transform
