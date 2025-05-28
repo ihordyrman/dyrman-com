@@ -19,9 +19,9 @@ type MarkdownToken =
     | ParenOpen
     | ParenClose
 
-type State = { Tokens: MarkdownToken list; CurrentText: string }
+type private State = { Tokens: MarkdownToken list; CurrentText: string }
 
-let (|Headers|_|) (line: string) =
+let private (|Headers|_|) (line: string) =
     if line.StartsWith '#' then
         let count =
             line.Trim() |> fun x -> x.ToCharArray() |> Array.takeWhile ((=) '#') |> Array.length |> min 6
@@ -31,21 +31,21 @@ let (|Headers|_|) (line: string) =
     else
         None
 
-let (|Meta|_|) (line: string) =
+let private (|Meta|_|) (line: string) =
     if line.StartsWith "---" then
         let rest = line.Substring 3
         Some rest
     else
         None
 
-let (|List|_|) (line: string) =
+let private (|List|_|) (line: string) =
     if line.StartsWith "- " then
         let rest = line.Substring 2
         Some rest
     else
         None
 
-let (|CodeBlock|_|) (line: string) =
+let private (|CodeBlock|_|) (line: string) =
     if line.StartsWith "```" then
         let lang = line.Substring(3).Trim()
 
@@ -53,63 +53,63 @@ let (|CodeBlock|_|) (line: string) =
     else
         None
 
-let (|Bold|_|) (text: string) =
+let private (|Bold|_|) (text: string) =
     if text.StartsWith "**" then
         let rest = text.Substring 2
         Some(rest)
     else
         None
 
-let (|Code|_|) (line: string) =
+let private (|Code|_|) (line: string) =
     if line.StartsWith "`" then
         let rest = line.Substring 1
         Some(rest)
     else
         None
 
-let (|Image|_|) (text: string) =
+let private (|Image|_|) (text: string) =
     if text.StartsWith "![" then
         let rest = text.Substring 2
         Some(rest)
     else
         None
 
-let (|LocalImageStart|_|) (text: string) =
+let private (|LocalImageStart|_|) (text: string) =
     if text.StartsWith "![[" then
         let rest = text.Substring 3
         Some(rest)
     else
         None
 
-let (|LocalImageEnd|_|) (text: string) =
+let private (|LocalImageEnd|_|) (text: string) =
     if text.StartsWith "]]" then
         let rest = text.Substring 2
         Some(rest)
     else
         None
 
-let (|SquareBracketOpen|_|) (text: string) =
+let private (|SquareBracketOpen|_|) (text: string) =
     if text.StartsWith "[" then
         let rest = text.Substring 1
         Some(rest)
     else
         None
 
-let (|SquareBracketClose|_|) (text: string) =
+let private (|SquareBracketClose|_|) (text: string) =
     if text.StartsWith "]" then
         let rest = text.Substring 1
         Some(rest)
     else
         None
 
-let (|ParenOpen|_|) (text: string) =
+let private (|ParenOpen|_|) (text: string) =
     if text.StartsWith "(" then
         let rest = text.Substring 1
         Some(rest)
     else
         None
 
-let (|ParenClose|_|) (text: string) =
+let private (|ParenClose|_|) (text: string) =
     if text.StartsWith ")" then
         let rest = text.Substring 1
         Some(rest)
