@@ -15,17 +15,23 @@ type HtmlElement =
     | LineBreak
     | ParagraphBreak
 
-type State = { Elements: HtmlElement list; Tokens: MarkdownToken list}
+type ActiveElement =
+    | None
+    | InBold of content: HtmlElement list
+
+type State = { Elements: HtmlElement list; Tokens: MarkdownToken list; Active: ActiveElement }
 
 let parse (tokens: MarkdownToken list) : HtmlElement list =
-    
-    let initialState = { Elements = []; Tokens = tokens }
-    
-    // todo: add implementation
+
+    let initialState = { Elements = []; Tokens = tokens; Active = None }
+
     let rec getElement (state: State) =
-        match state.Tokens with
-        | [] -> state
-        | NewLine :: rest -> state
+        match state.Tokens, state.Active with
+        | BoldMarker :: rest, None -> { state with Tokens = rest; Active = InBold [] }
+        | BoldMarker :: rest, InBold content ->
+            let boldElement = Bold(List.rev content)
+            { state with Tokens = rest; Active = None; Elements = boldElement :: state.Elements }
         | _ -> state
 
-    []
+    let finalState = getElement initialState
+    finalState.Elements

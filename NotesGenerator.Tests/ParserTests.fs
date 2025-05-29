@@ -131,3 +131,67 @@ let ``Header level 6 (maximum)`` () =
     let result = parse tokens
     let expected = [ Header(6, [ HtmlElement.Text "Deep Header" ]) ]
     Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Simple bold text`` () =
+    let tokens = [ BoldMarker; MarkdownToken.Text "bold"; BoldMarker ]
+    let result = parse tokens
+    let expected = [ Bold([ HtmlElement.Text "bold" ]) ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Bold with multiple text tokens`` () =
+    let tokens = 
+        [ BoldMarker
+          MarkdownToken.Text "b"
+          MarkdownToken.Text "o"
+          MarkdownToken.Text "l"
+          MarkdownToken.Text "d"
+          MarkdownToken.Text " "
+          MarkdownToken.Text "t"
+          MarkdownToken.Text "e"
+          MarkdownToken.Text "x"
+          MarkdownToken.Text "t"
+          BoldMarker ]
+    let result = parse tokens
+    let expected = [ Bold([ HtmlElement.Text "bold text" ]) ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Text before and after bold`` () =
+    let tokens = 
+        [ MarkdownToken.Text "start "
+          BoldMarker
+          MarkdownToken.Text "bold"
+          BoldMarker
+          MarkdownToken.Text " end" ]
+    let result = parse tokens
+    let expected = 
+        [ HtmlElement.Text "start "
+          Bold([ HtmlElement.Text "bold" ])
+          HtmlElement.Text " end" ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Multiple bold sections`` () =
+    let tokens = 
+        [ BoldMarker
+          MarkdownToken.Text "first"
+          BoldMarker
+          MarkdownToken.Text " and "
+          BoldMarker
+          MarkdownToken.Text "second"
+          BoldMarker ]
+    let result = parse tokens
+    let expected = 
+        [ Bold([ HtmlElement.Text "first" ])
+          HtmlElement.Text " and "
+          Bold([ HtmlElement.Text "second" ]) ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Empty bold section`` () =
+    let tokens = [ BoldMarker; BoldMarker ]
+    let result = parse tokens
+    let expected = [ Bold([]) ]
+    Assert.Equal<HtmlElement list>(expected, result)
