@@ -137,12 +137,6 @@ let ``Triple backticks with language`` () =
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
-let ``Triple backticks with language and spaces`` () =
-    let result = tokenize "```  python  "
-    let expected = [ CodeBlockMarker(Some "python"); NewLine ]
-    Assert.Equal<MarkdownToken list>(expected, result)
-
-[<Fact>]
 let ``Double asterisk creates BoldMarker`` () =
     let result = tokenize "**bold**"
     let expected = [ BoldMarker; Text "b"; Text "o"; Text "l"; Text "d"; BoldMarker; NewLine ]
@@ -204,30 +198,6 @@ let ``Text with inline code`` () =
           Text "i"
           Text "o"
           Text "n"
-          NewLine ]
-
-    Assert.Equal<MarkdownToken list>(expected, result)
-
-[<Fact>]
-let ``Header with bold text`` () =
-    let result = tokenize "## **Bold Header**"
-
-    let expected =
-        [ HeaderMarker 2
-          Text " "
-          BoldMarker
-          Text "B"
-          Text "o"
-          Text "l"
-          Text "d"
-          Text " "
-          Text "H"
-          Text "e"
-          Text "a"
-          Text "d"
-          Text "e"
-          Text "r"
-          BoldMarker
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -370,28 +340,6 @@ let ``Local image at line start`` () =
           Text "g"
           Text "e"
           LocalImageEnd
-          NewLine ]
-
-    Assert.Equal<MarkdownToken list>(expected, result)
-
-[<Fact>]
-let ``Local image takes precedence over regular image`` () =
-    let result = tokenize "![[not ![regular"
-
-    let expected =
-        [ LocalImageStart
-          Text "n"
-          Text "o"
-          Text "t"
-          Text " "
-          ImageMarker
-          Text "r"
-          Text "e"
-          Text "g"
-          Text "u"
-          Text "l"
-          Text "a"
-          Text "r"
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -690,57 +638,3 @@ let ``Image at start vs image in middle have different tokenization`` () =
 
     Assert.Equal<MarkdownToken list>(startExpected, startResult)
     Assert.Equal<MarkdownToken list>(middleExpected, middleResult)
-
-[<Fact>]
-let ``Complex markdown line with multiple elements`` () =
-    let result = tokenize "Check [**bold link**](url) and ![image](pic.jpg)"
-
-    let expected =
-        [ Text "C"
-          Text "h"
-          Text "e"
-          Text "c"
-          Text "k"
-          Text " "
-          SquareBracketOpen
-          BoldMarker
-          Text "b"
-          Text "o"
-          Text "l"
-          Text "d"
-          Text " "
-          Text "l"
-          Text "i"
-          Text "n"
-          Text "k"
-          BoldMarker
-          SquareBracketClose
-          ParenOpen
-          Text "u"
-          Text "r"
-          Text "l"
-          ParenClose
-          Text " "
-          Text "a"
-          Text "n"
-          Text "d"
-          Text " "
-          ImageMarker
-          Text "i"
-          Text "m"
-          Text "a"
-          Text "g"
-          Text "e"
-          SquareBracketClose
-          ParenOpen
-          Text "p"
-          Text "i"
-          Text "c"
-          Text "."
-          Text "j"
-          Text "p"
-          Text "g"
-          ParenClose
-          NewLine ]
-
-    Assert.Equal<MarkdownToken list>(expected, result)

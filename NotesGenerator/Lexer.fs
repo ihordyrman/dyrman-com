@@ -3,7 +3,7 @@ module NotesGenerator.Lexer
 open System
 
 type MarkdownToken =
-    | Text of string
+    | Text of text: string
     | MetaMarker
     | NewLine
     | BoldMarker
