@@ -3,7 +3,7 @@ module NotesGenerator.Lexer
 open System
 
 type MarkdownToken =
-    | Text of text: string
+    | Symbol of ch: char
     | MetaMarker
     | NewLine
     | BoldMarker
@@ -147,7 +147,7 @@ let tokenize line =
         | text ->
             let rest = text.Substring 1
             let character = text.Substring(0, 1)
-            getTokens (cloneState state rest (Text character))
+            getTokens (cloneState state rest (Symbol character[0]))
 
     // check the rest of the line
     let finalState = getTokens state

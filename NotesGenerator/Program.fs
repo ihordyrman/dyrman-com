@@ -15,14 +15,9 @@ Directory.GetFiles(@$"{solutionFolder}/notes/", "*.md", SearchOption.AllDirector
 |> Array.iter (fun file ->
     let content = File.ReadAllLines file |> Renderer.convertMarkdownToHtml
 
-    let htmlTemplate =
-        Templates.note content.Meta.Title content.Meta.Date content.HtmlContent
+    let htmlTemplate = Templates.note content.Meta.Title content.Meta.Date content.HtmlContent
 
-    File.WriteAllText(
-        @$"{solutionFolder}/NotesGenerator/Outputs/{content.Meta.Path}.html",
-        htmlTemplate,
-        System.Text.Encoding.UTF8
-    )
+    File.WriteAllText(@$"{solutionFolder}/NotesGenerator/Outputs/{content.Meta.Path}.html", htmlTemplate, System.Text.Encoding.UTF8)
 
     printfn $"{content}"
     ())
@@ -36,10 +31,10 @@ Directory.GetFiles(@$"{solutionFolder}/notes/Images/", "*", SearchOption.AllDire
     File.Copy(file, $@"{solutionFolder}/NotesGenerator/Outputs/Images/{fileName}", true))
 
 // Tokenize -> Parse -> Render
-// "# **Bold** title" 
+// "# **Bold** title"
 //     ↓ Lexer
 // [HeaderMarker 1; BoldMarker; Text "B"; Text "o"...; BoldMarker; ...]
-//     ↓ Parser  
+//     ↓ Parser
 // Header(1, [Bold([Text "Bold"]); Text " title"])
 //     ↓ Renderer
 // "<h1><strong>Bold</strong> title</h1>"

@@ -21,20 +21,38 @@ let parse (tokens: MarkdownToken list) : HtmlElement list =
 
     let initialState = { Elements = []; Tokens = tokens; Active = None }
 
-    let rec extractText acc tokens =
-        match tokens with
-        | MarkdownToken.Text text :: rest -> extractText (acc + text) rest
-        | _ -> acc, tokens
+    let extractText tokens =
+        let rec extract acc tokens =
+            match tokens with
+            | MarkdownToken.Symbol text :: rest -> extract (acc + text.ToString()) rest
+            | _ -> acc, tokens
 
-    // looks like we need active patterns here
+        extract "" tokens
+
+    // we might need active patterns here to hide a mess
     let rec getElement (state: State) =
         match state.Tokens, state.Active with
         | [], _ -> state
         | BoldMarker :: rest, None -> getElement { state with Tokens = rest; Active = Some(Bold "") }
         | BoldMarker :: rest, Some(Bold _) -> getElement { state with Tokens = rest; Active = None }
-        | MarkdownToken.Text _ :: _, Some(Bold _) ->
-            let text, leftover = extractText "" state.Tokens
-            getElement { state with Tokens = leftover; Elements = state.Elements @ [ Bold(text) ] }
+        | HeaderMarker level :: rest, None -> getElement { state with Tokens = rest; Active = Some(Header(level, "")) }
+        | MarkdownToken.Symbol _ :: _, Some(Header(level, _)) ->
+            let text, leftover = extractText state.Tokens
+
+            getElement
+                { state with
+                    Tokens = leftover
+                    Elements = state.Elements @ [ Header(level, text |> string) ]
+                    Active = None }
+
+        | MarkdownToken.Symbol _ :: _, Some(Bold _) ->
+            let text, leftover = extractText state.Tokens
+            getElement { state with Tokens = leftover; Elements = state.Elements @ [ Bold(text |> string) ] }
+        | MarkdownToken.Symbol _ :: _, None ->
+            let text, leftover = extractText state.Tokens
+            getElement { state with Tokens = leftover; Elements = state.Elements @ [ Text(text |> string) ] }
+        | NewLine :: rest, None ->
+            getElement { state with Tokens = rest; Elements = state.Elements @ [ LineBreak ]; Active = Some(LineBreak) }
         | _ -> failwithf "wrong tokens sequence"
 
     let finalState = getElement initialState

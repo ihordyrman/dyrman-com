@@ -13,17 +13,17 @@ let ``Plain text produces Text tokens and NewLine`` () =
     let result = tokenize "hello world"
 
     let expected =
-        [ Text "h"
-          Text "e"
-          Text "l"
-          Text "l"
-          Text "o"
-          Text " "
-          Text "w"
-          Text "o"
-          Text "r"
-          Text "l"
-          Text "d"
+        [ Symbol 'h'
+          Symbol 'e'
+          Symbol 'l'
+          Symbol 'l'
+          Symbol 'o'
+          Symbol ' '
+          Symbol 'w'
+          Symbol 'o'
+          Symbol 'r'
+          Symbol 'l'
+          Symbol 'd'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -31,7 +31,10 @@ let ``Plain text produces Text tokens and NewLine`` () =
 [<Fact>]
 let ``Single hash creates HeaderMarker level 1`` () =
     let result = tokenize "# Title"
-    let expected = [ HeaderMarker 1; Text " "; Text "T"; Text "i"; Text "t"; Text "l"; Text "e"; NewLine ]
+
+    let expected =
+        [ HeaderMarker 1; Symbol ' '; Symbol 'T'; Symbol 'i'; Symbol 't'; Symbol 'l'; Symbol 'e'; NewLine ]
+
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
@@ -40,15 +43,15 @@ let ``Triple hash creates HeaderMarker level 3`` () =
 
     let expected =
         [ HeaderMarker 3
-          Text " "
-          Text "S"
-          Text "u"
-          Text "b"
-          Text "t"
-          Text "i"
-          Text "t"
-          Text "l"
-          Text "e"
+          Symbol ' '
+          Symbol 'S'
+          Symbol 'u'
+          Symbol 'b'
+          Symbol 't'
+          Symbol 'i'
+          Symbol 't'
+          Symbol 'l'
+          Symbol 'e'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -59,18 +62,18 @@ let ``Six hashes creates HeaderMarker level 6`` () =
 
     let expected =
         [ HeaderMarker 6
-          Text " "
-          Text "D"
-          Text "e"
-          Text "e"
-          Text "p"
-          Text " "
-          Text "H"
-          Text "e"
-          Text "a"
-          Text "d"
-          Text "e"
-          Text "r"
+          Symbol ' '
+          Symbol 'D'
+          Symbol 'e'
+          Symbol 'e'
+          Symbol 'p'
+          Symbol ' '
+          Symbol 'H'
+          Symbol 'e'
+          Symbol 'a'
+          Symbol 'd'
+          Symbol 'e'
+          Symbol 'r'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -81,18 +84,18 @@ let ``More than six hashes capped at level 6`` () =
 
     let expected =
         [ HeaderMarker 6
-          Text "#"
-          Text "#"
-          Text "#"
-          Text " "
-          Text "T"
-          Text "o"
-          Text "o"
-          Text " "
-          Text "M"
-          Text "a"
-          Text "n"
-          Text "y"
+          Symbol '#'
+          Symbol '#'
+          Symbol '#'
+          Symbol ' '
+          Symbol 'T'
+          Symbol 'o'
+          Symbol 'o'
+          Symbol ' '
+          Symbol 'M'
+          Symbol 'a'
+          Symbol 'n'
+          Symbol 'y'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -108,20 +111,28 @@ let ``Meta with content`` () =
     let result = tokenize "---content"
 
     let expected =
-        [ MetaMarker; Text "c"; Text "o"; Text "n"; Text "t"; Text "e"; Text "n"; Text "t"; NewLine ]
+        [ MetaMarker
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 't'
+          Symbol 'e'
+          Symbol 'n'
+          Symbol 't'
+          NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Dash space creates ListMarker`` () =
     let result = tokenize "- Item"
-    let expected = [ ListMarker; Text "I"; Text "t"; Text "e"; Text "m"; NewLine ]
+    let expected = [ ListMarker; Symbol 'I'; Symbol 't'; Symbol 'e'; Symbol 'm'; NewLine ]
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Dash without space is plain text`` () =
     let result = tokenize "-Item"
-    let expected = [ Text "-"; Text "I"; Text "t"; Text "e"; Text "m"; NewLine ]
+    let expected = [ Symbol '-'; Symbol 'I'; Symbol 't'; Symbol 'e'; Symbol 'm'; NewLine ]
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
@@ -139,7 +150,7 @@ let ``Triple backticks with language`` () =
 [<Fact>]
 let ``Double asterisk creates BoldMarker`` () =
     let result = tokenize "**bold**"
-    let expected = [ BoldMarker; Text "b"; Text "o"; Text "l"; Text "d"; BoldMarker; NewLine ]
+    let expected = [ BoldMarker; Symbol 'b'; Symbol 'o'; Symbol 'l'; Symbol 'd'; BoldMarker; NewLine ]
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
@@ -147,20 +158,20 @@ let ``Text with bold in middle`` () =
     let result = tokenize "start**bold**end"
 
     let expected =
-        [ Text "s"
-          Text "t"
-          Text "a"
-          Text "r"
-          Text "t"
+        [ Symbol 's'
+          Symbol 't'
+          Symbol 'a'
+          Symbol 'r'
+          Symbol 't'
           BoldMarker
-          Text "b"
-          Text "o"
-          Text "l"
-          Text "d"
+          Symbol 'b'
+          Symbol 'o'
+          Symbol 'l'
+          Symbol 'd'
           BoldMarker
-          Text "e"
-          Text "n"
-          Text "d"
+          Symbol 'e'
+          Symbol 'n'
+          Symbol 'd'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -168,7 +179,7 @@ let ``Text with bold in middle`` () =
 [<Fact>]
 let ``Single backtick creates CodeMarker`` () =
     let result = tokenize "`code`"
-    let expected = [ CodeMarker; Text "c"; Text "o"; Text "d"; Text "e"; CodeMarker; NewLine ]
+    let expected = [ CodeMarker; Symbol 'c'; Symbol 'o'; Symbol 'd'; Symbol 'e'; CodeMarker; NewLine ]
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
@@ -176,28 +187,28 @@ let ``Text with inline code`` () =
     let result = tokenize "Use `print()` function"
 
     let expected =
-        [ Text "U"
-          Text "s"
-          Text "e"
-          Text " "
+        [ Symbol 'U'
+          Symbol 's'
+          Symbol 'e'
+          Symbol ' '
           CodeMarker
-          Text "p"
-          Text "r"
-          Text "i"
-          Text "n"
-          Text "t"
+          Symbol 'p'
+          Symbol 'r'
+          Symbol 'i'
+          Symbol 'n'
+          Symbol 't'
           ParenOpen
           ParenClose
           CodeMarker
-          Text " "
-          Text "f"
-          Text "u"
-          Text "n"
-          Text "c"
-          Text "t"
-          Text "i"
-          Text "o"
-          Text "n"
+          Symbol ' '
+          Symbol 'f'
+          Symbol 'u'
+          Symbol 'n'
+          Symbol 'c'
+          Symbol 't'
+          Symbol 'i'
+          Symbol 'o'
+          Symbol 'n'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -208,21 +219,21 @@ let ``List item with code`` () =
 
     let expected =
         [ ListMarker
-          Text "U"
-          Text "s"
-          Text "e"
-          Text " "
+          Symbol 'U'
+          Symbol 's'
+          Symbol 'e'
+          Symbol ' '
           CodeMarker
-          Text "g"
-          Text "i"
-          Text "t"
-          Text " "
-          Text "s"
-          Text "t"
-          Text "a"
-          Text "t"
-          Text "u"
-          Text "s"
+          Symbol 'g'
+          Symbol 'i'
+          Symbol 't'
+          Symbol ' '
+          Symbol 's'
+          Symbol 't'
+          Symbol 'a'
+          Symbol 't'
+          Symbol 'u'
+          Symbol 's'
           CodeMarker
           NewLine ]
 
@@ -233,7 +244,15 @@ let ``Single asterisk is plain text`` () =
     let result = tokenize "*italic*"
 
     let expected =
-        [ Text "*"; Text "i"; Text "t"; Text "a"; Text "l"; Text "i"; Text "c"; Text "*"; NewLine ]
+        [ Symbol '*'
+          Symbol 'i'
+          Symbol 't'
+          Symbol 'a'
+          Symbol 'l'
+          Symbol 'i'
+          Symbol 'c'
+          Symbol '*'
+          NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
 
@@ -242,19 +261,19 @@ let ``Line starting with space and hash`` () =
     let result = tokenize " # Not Header"
 
     let expected =
-        [ Text " "
-          Text "#"
-          Text " "
-          Text "N"
-          Text "o"
-          Text "t"
-          Text " "
-          Text "H"
-          Text "e"
-          Text "a"
-          Text "d"
-          Text "e"
-          Text "r"
+        [ Symbol ' '
+          Symbol '#'
+          Symbol ' '
+          Symbol 'N'
+          Symbol 'o'
+          Symbol 't'
+          Symbol ' '
+          Symbol 'H'
+          Symbol 'e'
+          Symbol 'a'
+          Symbol 'd'
+          Symbol 'e'
+          Symbol 'r'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -262,14 +281,14 @@ let ``Line starting with space and hash`` () =
 [<Fact>]
 let ``Only spaces`` () =
     let result = tokenize "   "
-    let expected = [ Text " "; Text " "; Text " "; NewLine ]
+    let expected = [ Symbol ' '; Symbol ' '; Symbol ' '; NewLine ]
     Assert.Equal<MarkdownToken list>(expected, result)
 
 [<Fact>]
 let ``Long text line`` () =
     let longText = String.replicate 100 "a"
     let result = tokenize longText
-    let expectedTexts = List.replicate 100 (Text "a")
+    let expectedTexts = List.replicate 100 (Symbol 'a')
     let expected = expectedTexts @ [ NewLine ]
     Assert.Equal<MarkdownToken list>(expected, result)
 
@@ -279,14 +298,14 @@ let ``Multiple bold markers`` () =
 
     let expected =
         [ BoldMarker
-          Text "o"
-          Text "n"
-          Text "e"
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 'e'
           BoldMarker
           BoldMarker
-          Text "t"
-          Text "w"
-          Text "o"
+          Symbol 't'
+          Symbol 'w'
+          Symbol 'o'
           BoldMarker
           NewLine ]
 
@@ -298,25 +317,25 @@ let ``Regular image at line start`` () =
 
     let expected =
         [ ImageMarker
-          Text "a"
-          Text "l"
-          Text "t"
-          Text " "
-          Text "t"
-          Text "e"
-          Text "x"
-          Text "t"
+          Symbol 'a'
+          Symbol 'l'
+          Symbol 't'
+          Symbol ' '
+          Symbol 't'
+          Symbol 'e'
+          Symbol 'x'
+          Symbol 't'
           SquareBracketClose
           ParenOpen
-          Text "i"
-          Text "m"
-          Text "a"
-          Text "g"
-          Text "e"
-          Text "."
-          Text "p"
-          Text "n"
-          Text "g"
+          Symbol 'i'
+          Symbol 'm'
+          Symbol 'a'
+          Symbol 'g'
+          Symbol 'e'
+          Symbol '.'
+          Symbol 'p'
+          Symbol 'n'
+          Symbol 'g'
           ParenClose
           NewLine ]
 
@@ -328,17 +347,17 @@ let ``Local image at line start`` () =
 
     let expected =
         [ LocalImageStart
-          Text "l"
-          Text "o"
-          Text "c"
-          Text "a"
-          Text "l"
-          Text "-"
-          Text "i"
-          Text "m"
-          Text "a"
-          Text "g"
-          Text "e"
+          Symbol 'l'
+          Symbol 'o'
+          Symbol 'c'
+          Symbol 'a'
+          Symbol 'l'
+          Symbol '-'
+          Symbol 'i'
+          Symbol 'm'
+          Symbol 'a'
+          Symbol 'g'
+          Symbol 'e'
           LocalImageEnd
           NewLine ]
 
@@ -349,31 +368,31 @@ let ``Regular image in middle of line`` () =
     let result = tokenize "Check ![alt](img.jpg) here"
 
     let expected =
-        [ Text "C"
-          Text "h"
-          Text "e"
-          Text "c"
-          Text "k"
-          Text " "
+        [ Symbol 'C'
+          Symbol 'h'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'k'
+          Symbol ' '
           ImageMarker
-          Text "a"
-          Text "l"
-          Text "t"
+          Symbol 'a'
+          Symbol 'l'
+          Symbol 't'
           SquareBracketClose
           ParenOpen
-          Text "i"
-          Text "m"
-          Text "g"
-          Text "."
-          Text "j"
-          Text "p"
-          Text "g"
+          Symbol 'i'
+          Symbol 'm'
+          Symbol 'g'
+          Symbol '.'
+          Symbol 'j'
+          Symbol 'p'
+          Symbol 'g'
           ParenClose
-          Text " "
-          Text "h"
-          Text "e"
-          Text "r"
-          Text "e"
+          Symbol ' '
+          Symbol 'h'
+          Symbol 'e'
+          Symbol 'r'
+          Symbol 'e'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -383,25 +402,25 @@ let ``Local image in middle of line`` () =
     let result = tokenize "See ![[diagram]] above"
 
     let expected =
-        [ Text "S"
-          Text "e"
-          Text "e"
-          Text " "
+        [ Symbol 'S'
+          Symbol 'e'
+          Symbol 'e'
+          Symbol ' '
           LocalImageStart
-          Text "d"
-          Text "i"
-          Text "a"
-          Text "g"
-          Text "r"
-          Text "a"
-          Text "m"
+          Symbol 'd'
+          Symbol 'i'
+          Symbol 'a'
+          Symbol 'g'
+          Symbol 'r'
+          Symbol 'a'
+          Symbol 'm'
           LocalImageEnd
-          Text " "
-          Text "a"
-          Text "b"
-          Text "o"
-          Text "v"
-          Text "e"
+          Symbol ' '
+          Symbol 'a'
+          Symbol 'b'
+          Symbol 'o'
+          Symbol 'v'
+          Symbol 'e'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -412,15 +431,15 @@ let ``Square brackets tokenized correctly`` () =
 
     let expected =
         [ SquareBracketOpen
-          Text "l"
-          Text "i"
-          Text "n"
-          Text "k"
-          Text " "
-          Text "t"
-          Text "e"
-          Text "x"
-          Text "t"
+          Symbol 'l'
+          Symbol 'i'
+          Symbol 'n'
+          Symbol 'k'
+          Symbol ' '
+          Symbol 't'
+          Symbol 'e'
+          Symbol 'x'
+          Symbol 't'
           SquareBracketClose
           NewLine ]
 
@@ -432,18 +451,18 @@ let ``Parentheses tokenized correctly`` () =
 
     let expected =
         [ ParenOpen
-          Text "s"
-          Text "o"
-          Text "m"
-          Text "e"
-          Text " "
-          Text "c"
-          Text "o"
-          Text "n"
-          Text "t"
-          Text "e"
-          Text "n"
-          Text "t"
+          Symbol 's'
+          Symbol 'o'
+          Symbol 'm'
+          Symbol 'e'
+          Symbol ' '
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 't'
+          Symbol 'e'
+          Symbol 'n'
+          Symbol 't'
           ParenClose
           NewLine ]
 
@@ -455,15 +474,15 @@ let ``Complete link structure`` () =
 
     let expected =
         [ SquareBracketOpen
-          Text "t"
-          Text "e"
-          Text "x"
-          Text "t"
+          Symbol 't'
+          Symbol 'e'
+          Symbol 'x'
+          Symbol 't'
           SquareBracketClose
           ParenOpen
-          Text "u"
-          Text "r"
-          Text "l"
+          Symbol 'u'
+          Symbol 'r'
+          Symbol 'l'
           ParenClose
           NewLine ]
 
@@ -476,21 +495,21 @@ let ``Link with bold text`` () =
     let expected =
         [ SquareBracketOpen
           BoldMarker
-          Text "b"
-          Text "o"
-          Text "l"
-          Text "d"
-          Text " "
-          Text "l"
-          Text "i"
-          Text "n"
-          Text "k"
+          Symbol 'b'
+          Symbol 'o'
+          Symbol 'l'
+          Symbol 'd'
+          Symbol ' '
+          Symbol 'l'
+          Symbol 'i'
+          Symbol 'n'
+          Symbol 'k'
           BoldMarker
           SquareBracketClose
           ParenOpen
-          Text "u"
-          Text "r"
-          Text "l"
+          Symbol 'u'
+          Symbol 'r'
+          Symbol 'l'
           ParenClose
           NewLine ]
 
@@ -503,26 +522,26 @@ let ``Image with code in alt text`` () =
     let expected =
         [ ImageMarker
           CodeMarker
-          Text "c"
-          Text "o"
-          Text "d"
-          Text "e"
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'd'
+          Symbol 'e'
           CodeMarker
-          Text " "
-          Text "a"
-          Text "l"
-          Text "t"
+          Symbol ' '
+          Symbol 'a'
+          Symbol 'l'
+          Symbol 't'
           SquareBracketClose
           ParenOpen
-          Text "i"
-          Text "m"
-          Text "a"
-          Text "g"
-          Text "e"
-          Text "."
-          Text "p"
-          Text "n"
-          Text "g"
+          Symbol 'i'
+          Symbol 'm'
+          Symbol 'a'
+          Symbol 'g'
+          Symbol 'e'
+          Symbol '.'
+          Symbol 'p'
+          Symbol 'n'
+          Symbol 'g'
           ParenClose
           NewLine ]
 
@@ -534,16 +553,16 @@ let ``Incomplete image syntax`` () =
 
     let expected =
         [ ImageMarker
-          Text "i"
-          Text "n"
-          Text "c"
-          Text "o"
-          Text "m"
-          Text "p"
-          Text "l"
-          Text "e"
-          Text "t"
-          Text "e"
+          Symbol 'i'
+          Symbol 'n'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'm'
+          Symbol 'p'
+          Symbol 'l'
+          Symbol 'e'
+          Symbol 't'
+          Symbol 'e'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -554,16 +573,16 @@ let ``Incomplete local image`` () =
 
     let expected =
         [ LocalImageStart
-          Text "i"
-          Text "n"
-          Text "c"
-          Text "o"
-          Text "m"
-          Text "p"
-          Text "l"
-          Text "e"
-          Text "t"
-          Text "e"
+          Symbol 'i'
+          Symbol 'n'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'm'
+          Symbol 'p'
+          Symbol 'l'
+          Symbol 'e'
+          Symbol 't'
+          Symbol 'e'
           NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
@@ -575,12 +594,12 @@ let ``Nested brackets`` () =
     let expected =
         [ SquareBracketOpen
           SquareBracketOpen
-          Text "n"
-          Text "e"
-          Text "s"
-          Text "t"
-          Text "e"
-          Text "d"
+          Symbol 'n'
+          Symbol 'e'
+          Symbol 's'
+          Symbol 't'
+          Symbol 'e'
+          Symbol 'd'
           LocalImageEnd
           NewLine ]
 
@@ -611,28 +630,28 @@ let ``Image at start vs image in middle have different tokenization`` () =
 
     let startExpected =
         [ ImageMarker
-          Text "a"
-          Text "l"
-          Text "t"
+          Symbol 'a'
+          Symbol 'l'
+          Symbol 't'
           SquareBracketClose
           ParenOpen
-          Text "u"
-          Text "r"
-          Text "l"
+          Symbol 'u'
+          Symbol 'r'
+          Symbol 'l'
           ParenClose
           NewLine ]
 
     let middleExpected =
-        [ Text "x"
+        [ Symbol 'x'
           ImageMarker
-          Text "a"
-          Text "l"
-          Text "t"
+          Symbol 'a'
+          Symbol 'l'
+          Symbol 't'
           SquareBracketClose
           ParenOpen
-          Text "u"
-          Text "r"
-          Text "l"
+          Symbol 'u'
+          Symbol 'r'
+          Symbol 'l'
           ParenClose
           NewLine ]
 

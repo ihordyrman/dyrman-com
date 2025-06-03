@@ -6,63 +6,71 @@ open Xunit
 
 [<Fact>]
 let ``Simple header level 1`` () =
-    let tokens = [ HeaderMarker 1; MarkdownToken.Text "Hello"; NewLine ]
+    let tokens = [ HeaderMarker 1; Symbol 'H'; Symbol 'e'; Symbol 'l'; Symbol 'l'; Symbol 'o'; NewLine ]
     let result = parse tokens
-    let expected = [ Header(1, "Hello") ]
+    let expected = [ Header(1, "Hello"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Simple header level 3`` () =
-    let tokens = [ HeaderMarker 3; MarkdownToken.Text "Subtitle"; NewLine ]
+    let tokens = [ HeaderMarker 3; Symbol 'H'; Symbol 'e'; Symbol 'l'; Symbol 'l'; Symbol 'o'; NewLine ]
     let result = parse tokens
-    let expected = [ Header(3, "Subtitle") ]
+    let expected = [ Header(3, "Hello"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Header with multiple text tokens`` () =
     let tokens =
         [ HeaderMarker 2
-          MarkdownToken.Text "H"
-          MarkdownToken.Text "e"
-          MarkdownToken.Text "l"
-          MarkdownToken.Text "l"
-          MarkdownToken.Text "o"
-          MarkdownToken.Text " "
-          MarkdownToken.Text "W"
-          MarkdownToken.Text "o"
-          MarkdownToken.Text "r"
-          MarkdownToken.Text "l"
-          MarkdownToken.Text "d"
+          Symbol 'H'
+          Symbol 'e'
+          Symbol 'l'
+          Symbol 'l'
+          Symbol 'o'
+          Symbol ' '
+          Symbol 'W'
+          Symbol 'o'
+          Symbol 'r'
+          Symbol 'l'
+          Symbol 'd'
           NewLine ]
 
     let result = parse tokens
-    let expected = [ Header(2, "Hello World") ]
+    let expected = [ Header(2, "Hello World"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Empty header`` () =
     let tokens = [ HeaderMarker 1; NewLine ]
     let result = parse tokens
-    let expected = [ Header(1, "") ]
+    let expected = [ Header(1, ""); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Header with only spaces`` () =
-    let tokens =
-        [ HeaderMarker 2; MarkdownToken.Text " "; MarkdownToken.Text " "; MarkdownToken.Text " "; NewLine ]
+    let tokens = [ HeaderMarker 2; Symbol ' '; Symbol ' '; Symbol ' '; NewLine ]
 
     let result = parse tokens
-    let expected = [ Header(2, "   ") ]
+    let expected = [ Header(2, "   "); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Multiple headers in sequence`` () =
     let tokens =
         [ HeaderMarker 1
-          MarkdownToken.Text "First"
+          Symbol 'F'
+          Symbol 'i'
+          Symbol 'r'
+          Symbol 's'
+          Symbol 't'
           NewLine
           HeaderMarker 2
-          MarkdownToken.Text "Second"
+          Symbol 'S'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 'd'
           NewLine ]
 
     let result = parse tokens
@@ -71,20 +79,16 @@ let ``Multiple headers in sequence`` () =
 
 [<Fact>]
 let ``Header level 6 (maximum)`` () =
-    let tokens = [ HeaderMarker 6; MarkdownToken.Text "Deep Header"; NewLine ]
+    let tokens =
+        [ HeaderMarker 6; Symbol 'H'; Symbol 'e'; Symbol 'a'; Symbol 'd'; Symbol 'e'; Symbol 'r'; NewLine ]
+
     let result = parse tokens
-    let expected = [ Header(6, "Deep Header") ]
+    let expected = [ Header(6, "Header"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Simple bold text`` () =
-    let tokens =
-        [ BoldMarker
-          MarkdownToken.Text "b"
-          MarkdownToken.Text "o"
-          MarkdownToken.Text "l"
-          MarkdownToken.Text "d"
-          BoldMarker ]
+    let tokens = [ BoldMarker; Symbol 'b'; Symbol 'o'; Symbol 'l'; Symbol 'd'; BoldMarker ]
 
     let result = parse tokens
     let expected = [ Bold "bold" ]
@@ -94,15 +98,15 @@ let ``Simple bold text`` () =
 let ``Bold with multiple text tokens`` () =
     let tokens =
         [ BoldMarker
-          MarkdownToken.Text "b"
-          MarkdownToken.Text "o"
-          MarkdownToken.Text "l"
-          MarkdownToken.Text "d"
-          MarkdownToken.Text " "
-          MarkdownToken.Text "t"
-          MarkdownToken.Text "e"
-          MarkdownToken.Text "x"
-          MarkdownToken.Text "t"
+          Symbol 'b'
+          Symbol 'o'
+          Symbol 'l'
+          Symbol 'd'
+          Symbol ' '
+          Symbol 't'
+          Symbol 'e'
+          Symbol 'x'
+          Symbol 't'
           BoldMarker ]
 
     let result = parse tokens
@@ -112,36 +116,58 @@ let ``Bold with multiple text tokens`` () =
 [<Fact>]
 let ``Text before and after bold`` () =
     let tokens =
-        [ MarkdownToken.Text "start "
+        [ Symbol 's'
+          Symbol 't'
+          Symbol 'a'
+          Symbol 'r'
+          Symbol 't'
+          Symbol ' '
           BoldMarker
-          MarkdownToken.Text "bold"
+          Symbol 'b'
+          Symbol 'o'
+          Symbol 'l'
+          Symbol 'd'
           BoldMarker
-          MarkdownToken.Text " end" ]
+          Symbol ' '
+          Symbol 'e'
+          Symbol 'n'
+          Symbol 'd' ]
 
     let result = parse tokens
-    let expected = [ HtmlElement.Text "start "; Bold "bold"; HtmlElement.Text " end" ]
+    let expected = [ Text "start "; Bold "bold"; Text " end" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Multiple bold sections`` () =
     let tokens =
         [ BoldMarker
-          MarkdownToken.Text "first"
+          Symbol 'f'
+          Symbol 'i'
+          Symbol 'r'
+          Symbol 's'
+          Symbol 't'
           BoldMarker
-          MarkdownToken.Text " and "
+          Symbol ' '
+          Symbol 'a'
+          Symbol 'n'
+          Symbol 'd'
+          Symbol ' '
           BoldMarker
-          MarkdownToken.Text "second"
+          Symbol 's'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 'd'
           BoldMarker ]
 
     let result = parse tokens
-
-    let expected = [ Bold "first"; HtmlElement.Text " and "; Bold "second" ]
-
+    let expected = [ Bold "first"; Text " and "; Bold "second" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Empty bold section`` () =
     let tokens = [ BoldMarker; BoldMarker ]
     let result = parse tokens
-    let expected = [ Bold "" ]
+    let expected = []
     Assert.Equal<HtmlElement list>(expected, result)
