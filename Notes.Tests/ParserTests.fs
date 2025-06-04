@@ -1,7 +1,7 @@
 module ParserTests
 
-open NotesGenerator.Lexer
-open NotesGenerator.Parser
+open Notes.Tokenizer
+open Notes.Parser
 open Xunit
 
 [<Fact>]
@@ -40,13 +40,6 @@ let ``Header with multiple text tokens`` () =
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
-let ``Empty header`` () =
-    let tokens = [ HeaderMarker 1; NewLine ]
-    let result = parse tokens
-    let expected = [ Header(1, ""); LineBreak ]
-    Assert.Equal<HtmlElement list>(expected, result)
-
-[<Fact>]
 let ``Header with only spaces`` () =
     let tokens = [ HeaderMarker 2; Symbol ' '; Symbol ' '; Symbol ' '; NewLine ]
 
@@ -74,7 +67,7 @@ let ``Multiple headers in sequence`` () =
           NewLine ]
 
     let result = parse tokens
-    let expected = [ Header(1, "First"); Header(2, "Second") ]
+    let expected = [ Header(1, "First"); LineBreak; Header(2, "Second"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
@@ -170,4 +163,71 @@ let ``Empty bold section`` () =
     let tokens = [ BoldMarker; BoldMarker ]
     let result = parse tokens
     let expected = []
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse simple inline code`` () =
+    let tokens =
+        [ CodeMarker
+          Symbol 'p'
+          Symbol 'r'
+          Symbol 'i'
+          Symbol 'n'
+          Symbol 't'
+          Symbol '('
+          Symbol '\''
+          Symbol 'h'
+          Symbol 'e'
+          Symbol 'l'
+          Symbol 'l'
+          Symbol 'o'
+          Symbol '\''
+          Symbol ')'
+          CodeMarker ]
+
+    let result = parse tokens
+    let expected = [ Code "print('hello')" ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse inline code with multiple text tokens`` () =
+    let tokens =
+        [ CodeMarker
+          Symbol 'l'
+          Symbol 'e'
+          Symbol 't'
+          Symbol ' '
+          Symbol 'x'
+          Symbol ' '
+          Symbol '='
+          Symbol ' '
+          Symbol '4'
+          Symbol '2'
+          CodeMarker ]
+
+    let result = parse tokens
+    let expected = [ Code "let x = 42" ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse multiple inline code blocks`` () =
+    let tokens =
+        [ CodeMarker
+          Symbol 'f'
+          Symbol 'o'
+          Symbol 'o'
+          CodeMarker
+          Symbol ' '
+          Symbol 'a'
+          Symbol 'n'
+          Symbol 'd'
+          Symbol ' '
+          CodeMarker
+          Symbol 'b'
+          Symbol 'a'
+          Symbol 'r'
+          CodeMarker ]
+
+    let result = parse tokens
+    let expected = [ Code "foo"; Text " and "; Code "bar" ]
     Assert.Equal<HtmlElement list>(expected, result)

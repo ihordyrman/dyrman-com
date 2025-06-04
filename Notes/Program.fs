@@ -17,18 +17,18 @@ Directory.GetFiles(@$"{solutionFolder}/notes/", "*.md", SearchOption.AllDirector
 
     let htmlTemplate = Templates.note content.Meta.Title content.Meta.Date content.HtmlContent
 
-    File.WriteAllText(@$"{solutionFolder}/NotesGenerator/Outputs/{content.Meta.Path}.html", htmlTemplate, System.Text.Encoding.UTF8)
+    File.WriteAllText(@$"{solutionFolder}/Notes/Outputs/{content.Meta.Path}.html", htmlTemplate, System.Text.Encoding.UTF8)
 
     printfn $"{content}"
     ())
 
-Directory.GetFiles(@$"{solutionFolder}/NotesGenerator/Outputs/Images/", "*", SearchOption.AllDirectories)
+Directory.GetFiles(@$"{solutionFolder}/Notes/Outputs/Images/", "*", SearchOption.AllDirectories)
 |> Array.iter (fun file -> File.Delete(file))
 
 Directory.GetFiles(@$"{solutionFolder}/notes/Images/", "*", SearchOption.AllDirectories)
 |> Array.iter (fun file ->
     let fileName = Path.GetFileName file
-    File.Copy(file, $@"{solutionFolder}/NotesGenerator/Outputs/Images/{fileName}", true))
+    File.Copy(file, $@"{solutionFolder}/Notes/Outputs/Images/{fileName}", true))
 
 // Tokenize -> Parse -> Render
 // "# **Bold** title"

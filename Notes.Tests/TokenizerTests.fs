@@ -1,6 +1,6 @@
 module TokenizerTests
 
-open NotesGenerator.Lexer
+open Notes.Tokenizer
 open Xunit
 
 [<Fact>]

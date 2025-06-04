@@ -2,7 +2,7 @@ module RendererTests
 
 open System
 open Xunit
-open NotesGenerator.Types
+open Notes.Types
 
 let concat elements = elements |> String.concat Environment.NewLine |> (fun x -> x + Environment.NewLine)
 

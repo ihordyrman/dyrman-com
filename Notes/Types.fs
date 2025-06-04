@@ -1,4 +1,4 @@
-namespace NotesGenerator.Types
+namespace Notes.Types
 
 type Token =
     | Text of string

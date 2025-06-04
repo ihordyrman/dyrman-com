@@ -1,7 +1,7 @@
 ﻿module Renderer
 
 open System
-open NotesGenerator.Types
+open Notes.Types
 
 let empty = String.Empty
 
