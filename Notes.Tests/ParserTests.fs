@@ -231,3 +231,74 @@ let ``Should parse multiple inline code blocks`` () =
     let result = parse tokens
     let expected = [ Code "foo"; Text " and "; Code "bar" ]
     Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse code block with language`` () =
+    let tokens =
+        [ CodeBlockMarker(Some "fsharp")
+          NewLine
+          Symbol 'l'
+          Symbol 'e'
+          Symbol 't'
+          Symbol ' '
+          Symbol 'x'
+          Symbol ' '
+          Symbol '='
+          Symbol ' '
+          Symbol '4'
+          Symbol '2'
+          CodeBlockMarker None ]
+
+    let result = parse tokens
+    let expected = [ CodeBlock(Some "fsharp", "let x = 42") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse code block without language`` () =
+    let tokens =
+        [ CodeBlockMarker None
+          NewLine
+          Symbol 'p'
+          Symbol 'r'
+          Symbol 'i'
+          Symbol 'n'
+          Symbol 't'
+          Symbol '('
+          Symbol '"'
+          Symbol 'h'
+          Symbol 'e'
+          Symbol 'l'
+          Symbol 'l'
+          Symbol 'o'
+          Symbol '"'
+          Symbol ')'
+          CodeBlockMarker None ]
+
+    let result = parse tokens
+    let expected = [ CodeBlock(None, "print(\"hello\")") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse multiple code blocks`` () =
+    let tokens =
+        [ CodeBlockMarker(Some "python")
+          NewLine
+          Symbol 'x'
+          Symbol ' '
+          Symbol '='
+          Symbol ' '
+          Symbol '1'
+          CodeBlockMarker None
+          NewLine
+          CodeBlockMarker(Some "js")
+          NewLine
+          Symbol 'y'
+          Symbol ' '
+          Symbol '='
+          Symbol ' '
+          Symbol '2'
+          CodeBlockMarker None ]
+
+    let result = parse tokens
+    let expected = [ CodeBlock(Some "python", "x = 1"); LineBreak; CodeBlock(Some "js", "y = 2") ]
+    Assert.Equal<HtmlElement list>(expected, result)
