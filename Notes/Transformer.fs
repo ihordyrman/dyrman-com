@@ -1,4 +1,4 @@
-module Notes.Parser
+module Notes.Transformer
 
 open System
 open Notes.Tokenizer
@@ -9,7 +9,7 @@ type HtmlElement =
     | Bold of content: string // +
     | Code of content: string // +
     | CodeBlock of language: string option * content: string // +
-    | List of items: HtmlElement list list // -
+    | List of items: string list // +
     | Link of text: string * url: string // -
     | Image of alt: string * url: string // -
     | Text of content: string // +
@@ -20,7 +20,7 @@ type private State = { Elements: HtmlElement list; Tokens: MarkdownToken list; A
 
 let private newLine = Environment.NewLine
 
-let parse (tokens: MarkdownToken list) : HtmlElement list =
+let transform (tokens: MarkdownToken list) : HtmlElement list =
 
     let initialState = { Elements = []; Tokens = tokens; Active = None }
 
@@ -42,6 +42,22 @@ let parse (tokens: MarkdownToken list) : HtmlElement list =
         let content, tokens = extract "" tokens
         CodeBlock(lang, content), tokens
 
+    let extractList tokens =
+        let rec extract (acc: string list) tokens =
+            match tokens with
+            | Symbol text :: rest ->
+                let result =
+                    match List.rev acc with
+                    | [] -> [ text.ToString() ]
+                    | last :: rest -> List.rev rest @ [ last + text.ToString() ]
+
+                result, rest
+            | NewLine :: ListMarker :: rets -> acc @ [ "" ], rets
+            | _ -> acc, tokens
+
+        let content, tokens = extract [] tokens
+        List content, tokens
+
     // might need active patterns here to hide a mess
     let rec getElement (state: State) =
         match state.Tokens, state.Active with
@@ -56,17 +72,20 @@ let parse (tokens: MarkdownToken list) : HtmlElement list =
             let text, leftover = extractText state.Tokens
 
             getElement { Tokens = leftover; Elements = state.Elements @ [ Header(level, text) ]; Active = None }
-        | CodeMarker :: rest, None -> getElement { state with Tokens = rest; Active = Some(Code "") }
-        | CodeMarker :: rest, Some(Code _) -> getElement { state with Tokens = rest; Active = None }
         | CodeBlockMarker lang :: NewLine :: rest, None -> getElement { state with Tokens = rest; Active = Some(CodeBlock(lang, "")) }
         | CodeBlockMarker _ :: rest, Some(CodeBlock(lang, content)) ->
             getElement { Tokens = rest; Elements = state.Elements @ [ CodeBlock(lang, content) ]; Active = None }
         | Symbol _ :: _, Some(CodeBlock(lang, _)) ->
             let codeBlock, leftover = extractCodeBlock state.Tokens lang
             getElement { state with Tokens = leftover; Active = Some(codeBlock) }
+        | CodeMarker :: rest, None -> getElement { state with Tokens = rest; Active = Some(Code "") }
+        | CodeMarker :: rest, Some(Code _) -> getElement { state with Tokens = rest; Active = None }
         | Symbol _ :: _, Some(Code _) ->
             let text, leftover = extractText state.Tokens
             getElement { state with Tokens = leftover; Elements = state.Elements @ [ Code text ] }
+        | ListMarker :: _, None ->
+            let list, leftover = extractList state.Tokens
+            getElement { state with Tokens = leftover; Elements = state.Elements @ [ list ] }
         | Symbol _ :: _, None ->
             let text, leftover = extractText state.Tokens
             getElement { state with Tokens = leftover; Elements = state.Elements @ [ Text text ] }
