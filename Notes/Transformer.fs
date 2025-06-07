@@ -51,8 +51,8 @@ let transform (tokens: MarkdownToken list) : HtmlElement list =
                     | [] -> [ text.ToString() ]
                     | last :: rest -> List.rev rest @ [ last + text.ToString() ]
 
-                result, rest
-            | NewLine :: ListMarker :: rets -> acc @ [ "" ], rets
+                extract result rest
+            | NewLine :: ListMarker :: rets -> extract (acc @ [ "" ]) rets
             | _ -> acc, tokens
 
         let content, tokens = extract [] tokens
@@ -83,8 +83,8 @@ let transform (tokens: MarkdownToken list) : HtmlElement list =
         | Symbol _ :: _, Some(Code _) ->
             let text, leftover = extractText state.Tokens
             getElement { state with Tokens = leftover; Elements = state.Elements @ [ Code text ] }
-        | ListMarker :: _, None ->
-            let list, leftover = extractList state.Tokens
+        | ListMarker :: rest, None ->
+            let list, leftover = extractList rest
             getElement { state with Tokens = leftover; Elements = state.Elements @ [ list ] }
         | Symbol _ :: _, None ->
             let text, leftover = extractText state.Tokens

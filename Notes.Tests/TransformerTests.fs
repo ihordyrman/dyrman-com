@@ -424,5 +424,5 @@ let ``Should transform list mixed with other elements`` () =
 
     let result = transform tokens
 
-    let expected = [ Text "Here:"; List [ "First"; "Second" ]; Text "Done." ]
+    let expected = [ Text "Here:"; LineBreak; List [ "First"; "Second" ]; LineBreak; Text "Done." ]
     Assert.Equal<HtmlElement list>(expected, result)
