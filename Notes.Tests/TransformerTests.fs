@@ -160,7 +160,7 @@ let ``Multiple bold sections`` () =
 let ``Empty bold section`` () =
     let tokens = [ BoldMarker; BoldMarker ]
     let result = transform tokens
-    let expected = []
+    let expected = [ Bold "" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
