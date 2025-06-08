@@ -42,7 +42,6 @@ let ``Header with multiple text tokens`` () =
 [<Fact>]
 let ``Header with only spaces`` () =
     let tokens = [ HeaderMarker 2; Symbol ' '; Symbol ' '; Symbol ' '; NewLine ]
-
     let result = transform tokens
     let expected = [ Header(2, "   "); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
@@ -82,7 +81,6 @@ let ``Header level 6 (maximum)`` () =
 [<Fact>]
 let ``Simple bold text`` () =
     let tokens = [ BoldMarker; Symbol 'b'; Symbol 'o'; Symbol 'l'; Symbol 'd'; BoldMarker ]
-
     let result = transform tokens
     let expected = [ Bold "bold" ]
     Assert.Equal<HtmlElement list>(expected, result)
@@ -319,7 +317,6 @@ let ``Should transform single list item`` () =
           Symbol 'm' ]
 
     let result = transform tokens
-
     let expected = [ List [ "First item" ] ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -351,7 +348,6 @@ let ``Should transform multiple list items`` () =
           Symbol '3' ]
 
     let result = transform tokens
-
     let expected = [ List [ "Item 1"; "Item 2"; "Item 3" ] ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -388,7 +384,6 @@ let ``Should transform list with spaces and punctuation`` () =
           Symbol '!' ]
 
     let result = transform tokens
-
     let expected = [ List [ "Buy milk, bread"; "Call John!" ] ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -423,6 +418,116 @@ let ``Should transform list mixed with other elements`` () =
           Symbol '.' ]
 
     let result = transform tokens
-
     let expected = [ Text "Here:"; LineBreak; List [ "First"; "Second" ]; LineBreak; Text "Done." ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse simple link`` () =
+    let tokens =
+        [ ImageMarker
+          Symbol 'c'
+          Symbol 'l'
+          Symbol 'i'
+          Symbol 'c'
+          Symbol 'k'
+          Symbol ' '
+          Symbol 'h'
+          Symbol 'e'
+          Symbol 'r'
+          Symbol 'e'
+          SquareBracketClose
+          ParenOpen
+          Symbol 'h'
+          Symbol 't'
+          Symbol 't'
+          Symbol 'p'
+          Symbol ':'
+          Symbol '/'
+          Symbol '/'
+          Symbol 'e'
+          Symbol 'x'
+          Symbol 'a'
+          Symbol 'm'
+          Symbol 'p'
+          Symbol 'l'
+          Symbol 'e'
+          Symbol '.'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'm'
+          ParenClose ]
+
+    let result = transform tokens
+    let expected = [ Link("click here", "http://example.com") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+
+[<Fact>]
+let ``Should parse link with special characters`` () =
+    let tokens =
+        [ ImageMarker
+          Symbol 'C'
+          Symbol 'h'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'k'
+          Symbol ' '
+          Symbol 'R'
+          Symbol 'E'
+          Symbol 'A'
+          Symbol 'D'
+          Symbol 'M'
+          Symbol 'E'
+          Symbol '!'
+          SquareBracketClose
+          ParenOpen
+          Symbol '/'
+          Symbol 'd'
+          Symbol 'o'
+          Symbol 'c'
+          Symbol 's'
+          Symbol '?'
+          Symbol 'v'
+          Symbol '='
+          Symbol '1'
+          ParenClose ]
+
+    let result = transform tokens
+    let expected = [ Link("Check README!", "/docs?v=1") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse multiple links`` () =
+    let tokens =
+        [ ImageMarker
+          Symbol 'F'
+          Symbol 'i'
+          Symbol 'r'
+          Symbol 's'
+          Symbol 't'
+          SquareBracketClose
+          ParenOpen
+          Symbol '/'
+          Symbol '1'
+          ParenClose
+          Symbol ' '
+          Symbol 'a'
+          Symbol 'n'
+          Symbol 'd'
+          Symbol ' '
+          ImageMarker
+          Symbol 'S'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 'd'
+          SquareBracketClose
+          ParenOpen
+          Symbol '/'
+          Symbol '2'
+          ParenClose ]
+
+    let result = transform tokens
+    let expected = [ Link("First", "/1"); Text " and "; Link("Second", "/2") ]
     Assert.Equal<HtmlElement list>(expected, result)
