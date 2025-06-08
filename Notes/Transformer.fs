@@ -4,20 +4,17 @@ open System
 open Notes.Tokenizer
 
 type HtmlElement =
-    | Header of level: int * content: string // +
-    | Bold of content: string // +
-    | Code of content: string // +
-    | CodeBlock of language: string option * content: string // +
-    | List of items: string list // +
-    | Link of text: string * url: string // +
-    | Image of alt: string * url: string // -
-    | Text of content: string // +
-    | LineBreak // ?
-    | ParagraphBreak // ?
+    | Header of level: int * content: string
+    | Bold of content: string
+    | Code of content: string
+    | CodeBlock of language: string option * content: string
+    | List of items: string list
+    | Link of text: string * url: string
+    | Image of alt: string * url: string
+    | Text of content: string
+    | LineBreak
 
 type private State = { Elements: HtmlElement list; Tokens: MarkdownToken list; Active: HtmlElement option }
-
-let private newLine = Environment.NewLine
 
 let private extractText tokens =
     let rec extract text tokens =
@@ -31,7 +28,7 @@ let private extractCodeBlock tokens lang =
     let rec extract code tokens =
         match tokens with
         | Symbol text :: rest -> extract (code + text.ToString()) rest
-        | NewLine :: rest -> extract (code + newLine) rest
+        | NewLine :: rest -> extract (code + Environment.NewLine) rest
         | _ -> code, tokens
 
     let content, tokens = extract "" tokens
@@ -61,16 +58,35 @@ let private extractLink tokens =
         | ParenClose :: rest -> acc, rest
         | _ -> acc, tokens
 
+    let text, leftover = extract "" tokens
+    let url, leftover = extract "" leftover
+    Link(text, url), leftover
+
+let private extractImage tokens =
+    let rec extract acc tokens =
+        match tokens with
+        | Symbol text :: rest -> extract (acc + text.ToString()) rest
+        | SquareBracketClose :: ParenOpen :: rest -> acc, rest
+        | ParenClose :: rest -> acc, rest
+        | _ -> acc, tokens
+
     let alt, leftover = extract "" tokens
     let url, leftover = extract "" leftover
+    Image(alt, url), leftover
 
-    Link(alt, url), leftover
+let private extractLocalImage tokens =
+    let rec extract acc tokens =
+        match tokens with
+        | Symbol text :: rest -> extract (acc + text.ToString()) rest
+        | LocalImageEnd :: rest -> acc, rest
+        | _ -> acc, tokens
+
+    let url, leftover = extract "" tokens
+    Image("", url), leftover
 
 let transform (tokens: MarkdownToken list) : HtmlElement list =
-
     let initialState = { Elements = []; Tokens = tokens; Active = None }
 
-    // might need active patterns here to hide a mess
     let rec getElement (state: State) =
         match state.Tokens, state.Active with
         | [], _ -> state
@@ -82,7 +98,6 @@ let transform (tokens: MarkdownToken list) : HtmlElement list =
         | HeaderMarker level :: rest, None -> getElement { state with Tokens = rest; Active = Some(Header(level, "")) }
         | Symbol _ :: _, Some(Header(level, _)) ->
             let text, leftover = extractText state.Tokens
-
             getElement { Tokens = leftover; Elements = state.Elements @ [ Header(level, text) ]; Active = None }
         | CodeBlockMarker lang :: NewLine :: rest, None -> getElement { state with Tokens = rest; Active = Some(CodeBlock(lang, "")) }
         | CodeBlockMarker _ :: rest, Some(CodeBlock(lang, content)) ->
@@ -99,6 +114,12 @@ let transform (tokens: MarkdownToken list) : HtmlElement list =
             let list, leftover = extractList rest
             getElement { state with Tokens = leftover; Elements = state.Elements @ [ list ] }
         | ImageMarker :: rest, None ->
+            let image, leftover = extractImage rest
+            getElement { state with Tokens = leftover; Elements = state.Elements @ [ image ] }
+        | LocalImageStart :: rest, None ->
+            let image, leftover = extractLocalImage rest
+            getElement { state with Tokens = leftover; Elements = state.Elements @ [ image ] }
+        | SquareBracketOpen :: rest, None ->
             let link, leftover = extractLink rest
             getElement { state with Tokens = leftover; Elements = state.Elements @ [ link ] }
         | Symbol _ :: _, None ->

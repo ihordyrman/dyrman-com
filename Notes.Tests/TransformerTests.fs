@@ -424,7 +424,7 @@ let ``Should transform list mixed with other elements`` () =
 [<Fact>]
 let ``Should parse simple link`` () =
     let tokens =
-        [ ImageMarker
+        [ SquareBracketOpen
           Symbol 'c'
           Symbol 'l'
           Symbol 'i'
@@ -465,7 +465,7 @@ let ``Should parse simple link`` () =
 [<Fact>]
 let ``Should parse link with special characters`` () =
     let tokens =
-        [ ImageMarker
+        [ SquareBracketOpen
           Symbol 'C'
           Symbol 'h'
           Symbol 'e'
@@ -499,7 +499,7 @@ let ``Should parse link with special characters`` () =
 [<Fact>]
 let ``Should parse multiple links`` () =
     let tokens =
-        [ ImageMarker
+        [ SquareBracketOpen
           Symbol 'F'
           Symbol 'i'
           Symbol 'r'
@@ -515,7 +515,7 @@ let ``Should parse multiple links`` () =
           Symbol 'n'
           Symbol 'd'
           Symbol ' '
-          ImageMarker
+          SquareBracketOpen
           Symbol 'S'
           Symbol 'e'
           Symbol 'c'
@@ -530,4 +530,223 @@ let ``Should parse multiple links`` () =
 
     let result = transform tokens
     let expected = [ Link("First", "/1"); Text " and "; Link("Second", "/2") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse simple image`` () =
+    let tokens =
+        [ ImageMarker
+          Symbol 'p'
+          Symbol 'h'
+          Symbol 'o'
+          Symbol 't'
+          Symbol 'o'
+          SquareBracketClose
+          ParenOpen
+          Symbol 'i'
+          Symbol 'm'
+          Symbol 'a'
+          Symbol 'g'
+          Symbol 'e'
+          Symbol '.'
+          Symbol 'j'
+          Symbol 'p'
+          Symbol 'g'
+          ParenClose ]
+
+    let result = transform tokens
+    let expected = [ Image("photo", "image.jpg") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse image with empty alt text`` () =
+    let tokens =
+        [ ImageMarker
+          SquareBracketClose
+          ParenOpen
+          Symbol 'l'
+          Symbol 'o'
+          Symbol 'g'
+          Symbol 'o'
+          Symbol '.'
+          Symbol 'p'
+          Symbol 'n'
+          Symbol 'g'
+          ParenClose ]
+
+    let result = transform tokens
+    let expected = [ Image("", "logo.png") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse multiple images with text`` () =
+    let tokens =
+        [ Symbol 'S'
+          Symbol 'e'
+          Symbol 'e'
+          Symbol ' '
+          ImageMarker
+          Symbol 'f'
+          Symbol 'i'
+          Symbol 'r'
+          Symbol 's'
+          Symbol 't'
+          SquareBracketClose
+          ParenOpen
+          Symbol '1'
+          Symbol '.'
+          Symbol 'j'
+          Symbol 'p'
+          Symbol 'g'
+          ParenClose
+          Symbol ' '
+          Symbol 'a'
+          Symbol 'n'
+          Symbol 'd'
+          Symbol ' '
+          ImageMarker
+          Symbol 's'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 'd'
+          SquareBracketClose
+          ParenOpen
+          Symbol '2'
+          Symbol '.'
+          Symbol 'p'
+          Symbol 'n'
+          Symbol 'g'
+          ParenClose ]
+
+    let result = transform tokens
+    let expected = [ Text "See "; Image("first", "1.jpg"); Text " and "; Image("second", "2.png") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse simple local image`` () =
+    let tokens =
+        [ LocalImageStart
+          Symbol 'i'
+          Symbol 'm'
+          Symbol 'a'
+          Symbol 'g'
+          Symbol 'e'
+          Symbol 's'
+          Symbol '/'
+          Symbol 's'
+          Symbol 'c'
+          Symbol 'r'
+          Symbol 'e'
+          Symbol 'e'
+          Symbol 'n'
+          Symbol 's'
+          Symbol 'h'
+          Symbol 'o'
+          Symbol 't'
+          Symbol '.'
+          Symbol 'p'
+          Symbol 'n'
+          Symbol 'g'
+          LocalImageEnd ]
+
+    let result = transform tokens
+    let expected = [ Image("", "images/screenshot.png") ]
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse multiple local images with text`` () =
+    let tokens =
+        [ Symbol 'C'
+          Symbol 'h'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'k'
+          Symbol ' '
+          LocalImageStart
+          Symbol 'f'
+          Symbol 'i'
+          Symbol 'r'
+          Symbol 's'
+          Symbol 't'
+          Symbol '.'
+          Symbol 'j'
+          Symbol 'p'
+          Symbol 'g'
+          LocalImageEnd
+          Symbol ' '
+          Symbol 'a'
+          Symbol 'n'
+          Symbol 'd'
+          Symbol ' '
+          LocalImageStart
+          Symbol 's'
+          Symbol 'e'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'n'
+          Symbol 'd'
+          Symbol '.'
+          Symbol 'p'
+          Symbol 'n'
+          Symbol 'g'
+          LocalImageEnd
+          Symbol ' '
+          Symbol 'f'
+          Symbol 'i'
+          Symbol 'l'
+          Symbol 'e'
+          Symbol 's' ]
+
+    let result = transform tokens
+
+    let expected =
+        [ Text "Check "; Image("", "first.jpg"); Text " and "; Image("", "second.png"); Text " files" ]
+
+    Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse mixed regular and local images`` () =
+    let tokens =
+        [ ImageMarker
+          Symbol 'a'
+          Symbol 'l'
+          Symbol 't'
+          SquareBracketClose
+          ParenOpen
+          Symbol 'h'
+          Symbol 't'
+          Symbol 't'
+          Symbol 'p'
+          Symbol ':'
+          Symbol '/'
+          Symbol '/'
+          Symbol 'e'
+          Symbol 'x'
+          Symbol 'a'
+          Symbol 'm'
+          Symbol 'p'
+          Symbol 'l'
+          Symbol 'e'
+          Symbol '.'
+          Symbol 'c'
+          Symbol 'o'
+          Symbol 'm'
+          ParenClose
+          Symbol ' '
+          LocalImageStart
+          Symbol 'l'
+          Symbol 'o'
+          Symbol 'c'
+          Symbol 'a'
+          Symbol 'l'
+          Symbol '.'
+          Symbol 'j'
+          Symbol 'p'
+          Symbol 'g'
+          LocalImageEnd ]
+
+    let result = transform tokens
+    let expected = [ Image("alt", "http://example.com"); Text " "; Image("", "local.jpg") ]
     Assert.Equal<HtmlElement list>(expected, result)
