@@ -17,130 +17,157 @@ type HtmlElement =
 type private State = { Elements: HtmlElement list; Tokens: MarkdownToken list; Meta: Map<string, string> }
 
 let private extractText tokens =
-    let rec extract text tokens =
+    let rec extract acc tokens =
         match tokens with
-        | Symbol symbol :: rest -> extract (text + symbol.ToString()) rest
-        | _ -> text, tokens
+        | Symbol ch :: rest -> extract (acc + ch.ToString()) rest
+        | _ -> acc, tokens
 
     extract "" tokens
 
-let private extractCodeBlock tokens lang =
-    let rec extract code tokens =
+let private extractCodeBlock tokens language =
+    let rec extract content tokens =
         match tokens with
-        | Symbol text :: rest -> extract (code + text.ToString()) rest
-        | NewLine :: rest -> extract (code + Environment.NewLine) rest
-        | CodeBlockMarker _ :: rest -> code, rest
-        | _ -> code, tokens
+        | Symbol ch :: rest -> extract (content + ch.ToString()) rest
+        | NewLine :: rest -> extract (content + Environment.NewLine) rest
+        | CodeBlockMarker _ :: rest -> content, rest
+        | _ -> content, tokens
 
-    let content, tokens = extract "" tokens
-    CodeBlock(lang, content), tokens
+    extract "" tokens
 
 let private extractList tokens =
     let rec extract content tokens =
         match tokens with
-        | Symbol text :: rest ->
+        | Symbol ch :: rest ->
             let result =
                 match List.rev content with
-                | [] -> [ text.ToString() ]
-                | last :: rest -> List.rev rest @ [ last + text.ToString() ]
+                | [] -> [ ch.ToString() ]
+                | last :: others -> List.rev others @ [ last + ch.ToString() ]
 
             extract result rest
-        | NewLine :: ListMarker :: rets -> extract (content @ [ "" ]) rets
+        | NewLine :: ListMarker :: rest -> extract (content @ [ "" ]) rest
         | _ -> content, tokens
 
-    let content, tokens = extract [] tokens
-    List content, tokens
+    extract [] tokens
 
 let private extractLink tokens =
-    let rec extract acc tokens =
+    let rec extractText acc tokens =
         match tokens with
-        | Symbol text :: rest -> extract (acc + text.ToString()) rest
+        | Symbol ch :: rest -> extractText (acc + ch.ToString()) rest
         | SquareBracketClose :: ParenOpen :: rest -> acc, rest
+        | _ -> acc, tokens
+
+    let rec extractUrl acc tokens =
+        match tokens with
+        | Symbol ch :: rest -> extractUrl (acc + ch.ToString()) rest
         | ParenClose :: rest -> acc, rest
         | _ -> acc, tokens
 
-    let text, rest = extract "" tokens
-    let url, rest = extract "" rest
-    Link(text, url), rest
+    let text, urlTokens = extractText "" tokens
+    let url, remaining = extractUrl "" urlTokens
+    (text, url), remaining
 
 let private extractImage tokens =
-    let rec extract acc tokens =
+    let rec extractAlt acc tokens =
         match tokens with
-        | Symbol text :: rest -> extract (acc + text.ToString()) rest
+        | Symbol ch :: rest -> extractAlt (acc + ch.ToString()) rest
         | SquareBracketClose :: ParenOpen :: rest -> acc, rest
+        | _ -> acc, tokens
+
+    let rec extractUrl acc tokens =
+        match tokens with
+        | Symbol ch :: rest -> extractUrl (acc + ch.ToString()) rest
         | ParenClose :: rest -> acc, rest
         | _ -> acc, tokens
 
-    let alt, rest = extract "" tokens
-    let url, rest = extract "" rest
-    Image(alt, url), rest
+    let alt, urlTokens = extractAlt "" tokens
+    let url, remaining = extractUrl "" urlTokens
+    (alt, url), remaining
 
 let private extractLocalImage tokens =
     let rec extract acc tokens =
         match tokens with
-        | Symbol text :: rest -> extract (acc + text.ToString()) rest
+        | Symbol ch :: rest -> extract (acc + ch.ToString()) rest
         | LocalImageEnd :: rest -> acc, rest
         | _ -> acc, tokens
 
-    let url, rest = extract "" tokens
-    Image("", url), rest
+    extract "" tokens
 
 let private extractMeta tokens =
     let rec extract acc meta tokens =
         match tokens with
-        | Symbol text :: rest -> extract (acc + text.ToString()) meta rest
+        | Symbol ch :: rest -> extract (acc + ch.ToString()) meta rest
         | NewLine :: rest ->
-            let index = acc.IndexOf ':'
-            let key = acc.Substring(0, index).Trim()
-            let value = acc.Substring(index + 1).Trim()
-            let meta = Map.add key value meta
-            "", meta, rest
-        | MetaMarker :: rest -> acc, meta, rest
-        | _ -> acc, meta, tokens
+            let colonIndex = acc.IndexOf ':'
 
-    let _, meta, rest = extract "", Map.empty, tokens
-    meta, rest
+            if colonIndex > 0 then
+                let key = acc.Substring(0, colonIndex).Trim()
+                let value = acc.Substring(colonIndex + 1).Trim()
+                let updatedMeta = Map.add key value meta
+                extract "" updatedMeta rest
+            else
+                extract "" meta rest
+        | MetaMarker :: rest -> meta, rest
+        | _ -> meta, tokens
+
+    extract "" Map.empty tokens
 
 let transform tokens =
     let initialState = { Elements = []; Tokens = tokens; Meta = Map.empty }
 
-    let rec getElement state =
+    let rec processTokens state =
         match state.Tokens with
         | [] -> state
         | MetaMarker :: rest ->
-            let meta, rest = extractMeta rest
-            getElement { state with Tokens = rest; Meta = meta }
+            let meta, remaining = extractMeta rest
+            processTokens { state with Tokens = remaining; Meta = meta }
         | BoldMarker :: rest ->
-            let text, rest = extractText rest
-            let bold = Bold text
-            getElement { state with Tokens = rest.Tail; Elements = state.Elements @ [ bold ] }
-        | HeaderMarker level :: rest ->
-            let text, rest = extractText rest
-            getElement { state with Tokens = rest; Elements = state.Elements @ [ Header(level, text) ] }
-        | CodeBlockMarker lang :: NewLine :: rest ->
-            let codeBlock, rest = extractCodeBlock rest lang
-            getElement { state with Tokens = rest; Elements = state.Elements @ [ codeBlock ] }
-        | CodeMarker :: rest ->
-            let text, rest = extractText rest
-            let code = Code text
-            getElement { state with Tokens = rest.Tail; Elements = state.Elements @ [ code ] }
-        | ListMarker :: rest ->
-            let list, rest = extractList rest
-            getElement { state with Tokens = rest; Elements = state.Elements @ [ list ] }
-        | ImageMarker :: rest ->
-            let image, rest = extractImage rest
-            getElement { state with Tokens = rest; Elements = state.Elements @ [ image ] }
-        | LocalImageStart :: rest ->
-            let image, rest = extractLocalImage rest
-            getElement { state with Tokens = rest; Elements = state.Elements @ [ image ] }
-        | SquareBracketOpen :: rest ->
-            let link, rest = extractLink rest
-            getElement { state with Tokens = rest; Elements = state.Elements @ [ link ] }
-        | Symbol _ :: _ ->
-            let text, rest = extractText state.Tokens
-            getElement { state with Tokens = rest; Elements = state.Elements @ [ Text text ] }
-        | NewLine :: rest -> getElement { state with Tokens = rest; Elements = state.Elements @ [ LineBreak ] }
-        | _ -> failwithf "wrong tokens sequence"
+            let text, remaining = extractText rest
 
-    let finalState = getElement initialState
+            match remaining with
+            | BoldMarker :: finalRemaining ->
+                let bold = Bold text
+                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ bold ] }
+            | _ -> processTokens { state with Tokens = state.Tokens.Tail }
+        | HeaderMarker level :: rest ->
+            let text, remaining = extractText rest
+            let header = Header(level, text)
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ header ] }
+        | CodeBlockMarker language :: NewLine :: rest ->
+            let content, remaining = extractCodeBlock rest language
+            let codeBlock = CodeBlock(language, content)
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ codeBlock ] }
+        | CodeMarker :: rest ->
+            let text, remaining = extractText rest
+
+            match remaining with
+            | CodeMarker :: finalRemaining ->
+                let code = Code text
+                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ code ] }
+            | _ -> processTokens { state with Tokens = state.Tokens.Tail }
+        | ListMarker :: rest ->
+            let items, remaining = extractList rest
+            let list = List items
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ list ] }
+        | ImageMarker :: rest ->
+            let (alt, url), remaining = extractImage rest
+            let image = Image(alt, url)
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ image ] }
+        | LocalImageStart :: rest ->
+            let url, remaining = extractLocalImage rest
+            let image = Image("", url)
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ image ] }
+        | SquareBracketOpen :: rest ->
+            let (text, url), remaining = extractLink rest
+            let link = Link(text, url)
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ link ] }
+        | Symbol _ :: _ ->
+            let text, remaining = extractText state.Tokens
+            let textElement = Text text
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ textElement ] }
+        | NewLine :: rest ->
+            let lineBreak = LineBreak
+            processTokens { state with Tokens = rest; Elements = state.Elements @ [ lineBreak ] }
+        | _ :: rest -> processTokens { state with Tokens = rest }
+
+    let finalState = processTokens initialState
     finalState.Elements
