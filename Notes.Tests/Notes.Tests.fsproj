@@ -12,6 +12,7 @@
         <Compile Include="TokenizerTests.fs" />
         <Compile Include="TransformerTests.fs" />
         <Compile Include="RendererTests.fs" />
+        <Compile Include="ParserTests.fs" />
     </ItemGroup>
 
     <ItemGroup>

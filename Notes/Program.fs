@@ -13,7 +13,7 @@ Directory.GetFiles(@$"{solutionFolder}/notes/", "*.md", SearchOption.AllDirector
     printfn $"{file.Length}"
     file
 |> Array.iter (fun file ->
-    let content = File.ReadAllLines file |> Renderer.convertMarkdownToHtml
+    let content = File.ReadAllLines file |> Parser.convertMarkdownToHtml
 
     let htmlTemplate = Templates.note content.Meta.Title content.Meta.Date content.HtmlContent
 

@@ -125,48 +125,37 @@ let transform tokens =
 
             match remaining with
             | BoldMarker :: finalRemaining ->
-                let bold = Bold text
-                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ bold ] }
+                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ Bold text ] }
             | _ -> processTokens { state with Tokens = state.Tokens.Tail }
         | HeaderMarker level :: rest ->
             let text, remaining = extractText rest
-            let header = Header(level, text)
-            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ header ] }
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ Header(level, text) ] }
         | CodeBlockMarker language :: NewLine :: rest ->
             let content, remaining = extractCodeBlock rest language
-            let codeBlock = CodeBlock(language, content)
-            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ codeBlock ] }
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ CodeBlock(language, content) ] }
         | CodeMarker :: rest ->
             let text, remaining = extractText rest
 
             match remaining with
             | CodeMarker :: finalRemaining ->
-                let code = Code text
-                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ code ] }
+                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ Code text ] }
             | _ -> processTokens { state with Tokens = state.Tokens.Tail }
         | ListMarker :: rest ->
             let items, remaining = extractList rest
-            let list = List items
-            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ list ] }
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ List items ] }
         | ImageMarker :: rest ->
             let (alt, url), remaining = extractImage rest
-            let image = Image(alt, url)
-            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ image ] }
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ Image(alt, url) ] }
         | LocalImageStart :: rest ->
             let url, remaining = extractLocalImage rest
-            let image = Image("", url)
-            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ image ] }
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ Image("", url) ] }
         | SquareBracketOpen :: rest ->
             let (text, url), remaining = extractLink rest
-            let link = Link(text, url)
-            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ link ] }
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ Link(text, url) ] }
         | Symbol _ :: _ ->
             let text, remaining = extractText state.Tokens
-            let textElement = Text text
-            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ textElement ] }
-        | NewLine :: rest ->
-            let lineBreak = LineBreak
-            processTokens { state with Tokens = rest; Elements = state.Elements @ [ lineBreak ] }
+            processTokens { state with Tokens = remaining; Elements = state.Elements @ [ Text text ] }
+        | NewLine :: rest -> processTokens { state with Tokens = rest; Elements = state.Elements @ [ LineBreak ] }
         | _ :: rest -> processTokens { state with Tokens = rest }
 
     let finalState = processTokens initialState

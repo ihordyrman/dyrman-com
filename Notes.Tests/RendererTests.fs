@@ -1,139 +1,131 @@
 module RendererTests
 
-open System
+open Notes.Transformer
+open Notes.Renderer
 open Xunit
-open Notes.Types
 
-let concat elements = elements |> String.concat Environment.NewLine |> (fun x -> x + Environment.NewLine)
+[<Theory>]
+[<InlineData(1)>]
+[<InlineData(2)>]
+[<InlineData(3)>]
+[<InlineData(4)>]
+[<InlineData(5)>]
+[<InlineData(6)>]
+let ``Should render header level correctly`` level =
+    let assertLevel (header: string) (level: int) =
+        let actualLevel = header.Substring((header.IndexOf '<') + 2, (header.IndexOf '>') - 2) |> int
+        Assert.Equal<int>(actualLevel, level)
 
-[<Fact>]
-let ``If the string starts with #, it should be a header`` () =
-    let input = "# Header"
-
-    Renderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<h1>Header</h1>", x.HtmlContent)
-
-[<Fact>]
-let ``If the string starts with - , it should be a list item`` () =
-    let input = "- List item"
-    let expected = [| "<ul>"; "<li>List item</li>"; "</ul>" |] |> concat
-
-    Renderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)
-
-[<Fact>]
-let ``If the string starts with ---, it should be a meta`` () =
-    let assertValue (a: HtmlPage) (b: string) (c: string) =
-        Assert.Equal(b, c)
-        a
-
-    Renderer.convertMarkdownToHtml
-        [| "---"
-           "title: Title"
-           "date: 2024-01-01"
-           "url: url"
-           "tags: test"
-           "---" |]
-    |> fun x -> assertValue x "2024-01-01" x.Meta.Date
-    |> fun x -> assertValue x "Title" x.Meta.Title
-    |> fun x -> assertValue x "url" x.Meta.Url
-    |> fun x -> assertValue x "" x.HtmlContent
-    |> fun x -> Assert.Equal<string list>([ "test" ], x.Meta.Tags)
+    let elements = [ Header(level, "Hello World") ]
+    let result = render elements
+    assertLevel result level
 
 [<Fact>]
-let ``If the string starts with ![ , it should be an image`` () =
-    let input = "![[image.png]]"
-
-    Renderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal("<img src=\"./Images/image.png\" alt=\"image.png\"/><br />", x.HtmlContent)
+let ``Should render multiple headers`` () =
+    let elements = [ Header(1, "Main Title"); Header(2, "Subtitle"); Header(3, "Section") ]
+    let result = render elements
+    let expected = "<h1>Main Title</h1><h2>Subtitle</h2><h3>Section</h3>"
+    Assert.Equal<string>(expected, result)
 
 [<Fact>]
-let ``If the string starts with three ` , it should be a code block`` () =
-    let input =
-        [| "```"
-           "let x = 1"
-           "let y = 2"
-           "let z = x + y"
-           "```" |]
+let ``Should render headers mixed with other elements`` () =
+    let elements = [ Header(1, "Title"); Text("Some text"); Header(2, "Subtitle") ]
+    let result = render elements
+    let expected = "<h1>Title</h1>Some text<h2>Subtitle</h2>"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render header with line breaks`` () =
+    let elements = [ Header(1, "First Header"); LineBreak; Header(2, "Second Header") ]
+    let result = render elements
+    let expected = "<h1>First Header</h1>\n<h2>Second Header</h2>"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render simple bold text`` () =
+    let elements = [ Bold("Hello World") ]
+    let result = render elements
+    let expected = "<strong>Hello World</strong>"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render multiple bold elements`` () =
+    let elements = [ Bold("First"); Bold("Second"); Bold("Third") ]
+    let result = render elements
+    let expected = "<strong>First</strong><strong>Second</strong><strong>Third</strong>"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render bold mixed with text`` () =
+    let elements = [ Text("This is "); Bold("bold"); Text(" text") ]
+    let result = render elements
+    let expected = "This is <strong>bold</strong> text"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render bold with line breaks`` () =
+    let elements = [ Bold("First bold"); LineBreak; Bold("Second bold") ]
+    let result = render elements
+    let expected = "<strong>First bold</strong>\n<strong>Second bold</strong>"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render simple image`` () =
+    let elements = [ Image("image", "image.jpg") ]
+    let result = render elements
+    let expected = "<img src=\"image.jpg\" alt=\"image\" />"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render image with empty alt text`` () =
+    let elements = [ Image("", "image.png") ]
+    let result = render elements
+    let expected = "<img src=\"image.png\" alt=\"\" />"
+    Assert.Equal<string>(expected, result)
+
+[<Fact>]
+let ``Should render multiple images`` () =
+    let elements = [ Image("First", "img1.jpg"); Image("Second", "img2.png"); Image("Third", "img3.gif") ]
+    let result = render elements
 
     let expected =
-        [| "<pre><code>"
-           "let x = 1"
-           "let y = 2"
-           "let z = x + y"
-           "</code></pre><br />" |]
-        |> concat
+        "<img src=\"img1.jpg\" alt=\"First\" /><img src=\"img2.png\" alt=\"Second\" /><img src=\"img3.gif\" alt=\"Third\" />"
 
-    Renderer.convertMarkdownToHtml input |> fun x -> Assert.Equal(expected, x.HtmlContent)
+    Assert.Equal<string>(expected, result)
 
 [<Fact>]
-let ``If the string starts with anything else, it should be a regular text`` () =
-    let input = "Regular text"
+let ``Should render image mixed with text`` () =
+    let elements =
+        [ Text("Text above the image "); Image("image", "image.jpg"); Text(" Text below the image") ]
 
-    Renderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal($"Regular text<br />{Environment.NewLine}", x.HtmlContent)
-
-[<Fact>]
-let ``If the string starts with *, it should be a bold text`` () =
-    let input = "**bold text**"
-
-    Renderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal($"<b>bold text</b><br />{Environment.NewLine}", x.HtmlContent)
+    let result = render elements
+    let expected = "Text above the image <img src=\"image.jpg\" alt=\"image\" /> Text below the image"
+    Assert.Equal<string>(expected, result)
 
 [<Fact>]
-let ``If the string contains *, it should be a bold text`` () =
-    let input = "not bold **bold**"
-
-    Renderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal($"not bold <b>bold</b><br />{Environment.NewLine}", x.HtmlContent)
-
-
-[<Fact>]
-let ``If the string start with `  , it should be a code content`` () =
-    let input = "`code content`"
-
-    Renderer.convertMarkdownToHtml [| input |]
-    |> fun x -> Assert.Equal($"<code>code content</code><br />{Environment.NewLine}", x.HtmlContent)
-
-[<Fact>]
-let ``Regular text with code block should be generated correctly`` () =
-    let input =
-        """Just a regular text
-
-```csharp
-WebApplicationBuilder builder = WebApplication.CreateBuilder();
-var currentAssembly = Assembly.GetExecutingAssembly();
-
-builder.Host.AddSerilog()
-    .AddMasterDbContext<AdminMasterDbContext, MasterDbContext>()
-    .AddKafka<Program>();
-```
-
-Another regular text"""
+let ``Should render image with line breaks`` () =
+    let elements = [ Image("First image", "img1.jpg"); LineBreak; Image("Second image", "img2.jpg") ]
+    let result = render elements
 
     let expected =
-        """Just a regular text<br />
-<br />
-<pre><code>
-WebApplicationBuilder builder = WebApplication.CreateBuilder();
-var currentAssembly = Assembly.GetExecutingAssembly();
+        "<img src=\"img1.jpg\" alt=\"First image\" />\n<img src=\"img2.jpg\" alt=\"Second image\" />"
 
-builder.Host.AddSerilog()
-    .AddMasterDbContext<AdminMasterDbContext, MasterDbContext>()
-    .AddKafka<Program>();
-</code></pre><br />
-<br />
-Another regular text<br />"""
-        + Environment.NewLine
-
-    input
-    |> fun x -> x.Split Environment.NewLine
-    |> Renderer.convertMarkdownToHtml
-    |> fun x -> Assert.Equal(expected, (x.HtmlContent |> System.Web.HttpUtility.HtmlDecode))
-
+    Assert.Equal<string>(expected, result)
 
 [<Fact>]
-let ``Link should be displayed correctly`` () =
-    let input = "text with [url](https://google.com)"
-    let expected = [| """text with <a href="https://google.com">url</a><br />""" |] |> concat
+let ``Should render single item list`` () =
+    let elements = [ List([ "Item 1" ]) ]
+    let result = render elements
+    let expected = "<ul><li>Item 1</li></ul>"
+    Assert.Equal<string>(expected, result)
 
-    Renderer.convertMarkdownToHtml [| input |] |> fun x -> Assert.Equal(expected, x.HtmlContent)
+[<Theory>]
+[<InlineData(1)>]
+[<InlineData(5)>]
+[<InlineData(10)>]
+[<InlineData(100)>]
+let ``Should render multiple items correctly`` count =
+    let items = List.init count (fun i -> $"item {i}")
+    let result = render [ List(items) ]
+    let actualCount = result.Split("<li>").Length - 1
+    Assert.Equal<int>(actualCount, count)
