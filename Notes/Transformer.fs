@@ -159,4 +159,4 @@ let transform tokens =
         | _ :: rest -> processTokens { state with Tokens = rest }
 
     let finalState = processTokens initialState
-    finalState.Elements
+    finalState.Elements, finalState.Meta

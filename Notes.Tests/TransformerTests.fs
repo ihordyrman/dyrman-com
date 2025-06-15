@@ -7,14 +7,14 @@ open Xunit
 [<Fact>]
 let ``Simple header level 1`` () =
     let tokens = [ HeaderMarker 1; Symbol 'H'; Symbol 'e'; Symbol 'l'; Symbol 'l'; Symbol 'o'; NewLine ]
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Header(1, "Hello"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Simple header level 3`` () =
     let tokens = [ HeaderMarker 3; Symbol 'H'; Symbol 'e'; Symbol 'l'; Symbol 'l'; Symbol 'o'; NewLine ]
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Header(3, "Hello"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -35,14 +35,14 @@ let ``Header with multiple text tokens`` () =
           Symbol 'd'
           NewLine ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Header(2, "Hello World"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Header with only spaces`` () =
     let tokens = [ HeaderMarker 2; Symbol ' '; Symbol ' '; Symbol ' '; NewLine ]
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Header(2, "   "); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -65,7 +65,7 @@ let ``Multiple headers in sequence`` () =
           Symbol 'd'
           NewLine ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Header(1, "First"); LineBreak; Header(2, "Second"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -74,14 +74,14 @@ let ``Header level 6 (maximum)`` () =
     let tokens =
         [ HeaderMarker 6; Symbol 'H'; Symbol 'e'; Symbol 'a'; Symbol 'd'; Symbol 'e'; Symbol 'r'; NewLine ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Header(6, "Header"); LineBreak ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Simple bold text`` () =
     let tokens = [ BoldMarker; Symbol 'b'; Symbol 'o'; Symbol 'l'; Symbol 'd'; BoldMarker ]
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Bold "bold" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -100,7 +100,7 @@ let ``Bold with multiple text tokens`` () =
           Symbol 't'
           BoldMarker ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Bold "bold text" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -124,7 +124,7 @@ let ``Text before and after bold`` () =
           Symbol 'n'
           Symbol 'd' ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Text "start "; Bold "bold"; Text " end" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -152,14 +152,14 @@ let ``Multiple bold sections`` () =
           Symbol 'd'
           BoldMarker ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Bold "first"; Text " and "; Bold "second" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
 [<Fact>]
 let ``Empty bold section`` () =
     let tokens = [ BoldMarker; BoldMarker ]
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Bold "" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -183,7 +183,7 @@ let ``Should transform simple inline code`` () =
           Symbol ')'
           CodeMarker ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Code "print('hello')" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -203,7 +203,7 @@ let ``Should transform inline code with multiple text tokens`` () =
           Symbol '2'
           CodeMarker ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Code "let x = 42" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -226,7 +226,7 @@ let ``Should transform multiple inline code blocks`` () =
           Symbol 'r'
           CodeMarker ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Code "foo"; Text " and "; Code "bar" ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -247,7 +247,7 @@ let ``Should transform code block with language`` () =
           Symbol '2'
           CodeBlockMarker None ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ CodeBlock(Some "fsharp", "let x = 42") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -272,7 +272,7 @@ let ``Should transform code block without language`` () =
           Symbol ')'
           CodeBlockMarker None ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ CodeBlock(None, "print(\"hello\")") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -297,7 +297,7 @@ let ``Should transform multiple code blocks`` () =
           Symbol '2'
           CodeBlockMarker None ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ CodeBlock(Some "python", "x = 1"); LineBreak; CodeBlock(Some "js", "y = 2") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -316,7 +316,7 @@ let ``Should transform single list item`` () =
           Symbol 'e'
           Symbol 'm' ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ List [ "First item" ] ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -347,7 +347,7 @@ let ``Should transform multiple list items`` () =
           Symbol ' '
           Symbol '3' ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ List [ "Item 1"; "Item 2"; "Item 3" ] ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -383,7 +383,7 @@ let ``Should transform list with spaces and punctuation`` () =
           Symbol 'n'
           Symbol '!' ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ List [ "Buy milk, bread"; "Call John!" ] ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -417,7 +417,7 @@ let ``Should transform list mixed with other elements`` () =
           Symbol 'e'
           Symbol '.' ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Text "Here:"; LineBreak; List [ "First"; "Second" ]; LineBreak; Text "Done." ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -457,7 +457,7 @@ let ``Should parse simple link`` () =
           Symbol 'm'
           ParenClose ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Link("click here", "http://example.com") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -492,7 +492,7 @@ let ``Should parse link with special characters`` () =
           Symbol '1'
           ParenClose ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Link("Check README!", "/docs?v=1") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -528,7 +528,7 @@ let ``Should parse multiple links`` () =
           Symbol '2'
           ParenClose ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Link("First", "/1"); Text " and "; Link("Second", "/2") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -554,7 +554,7 @@ let ``Should parse simple image`` () =
           Symbol 'g'
           ParenClose ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Image("photo", "image.jpg") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -574,7 +574,7 @@ let ``Should parse image with empty alt text`` () =
           Symbol 'g'
           ParenClose ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Image("", "logo.png") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -620,7 +620,7 @@ let ``Should parse multiple images with text`` () =
           Symbol 'g'
           ParenClose ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Text "See "; Image("first", "1.jpg"); Text " and "; Image("second", "2.png") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -651,7 +651,7 @@ let ``Should parse simple local image`` () =
           Symbol 'g'
           LocalImageEnd ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Image("", "images/screenshot.png") ]
     Assert.Equal<HtmlElement list>(expected, result)
 
@@ -699,7 +699,7 @@ let ``Should parse multiple local images with text`` () =
           Symbol 'e'
           Symbol 's' ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
 
     let expected =
         [ Text "Check "; Image("", "first.jpg"); Text " and "; Image("", "second.png"); Text " files" ]
@@ -747,6 +747,58 @@ let ``Should parse mixed regular and local images`` () =
           Symbol 'g'
           LocalImageEnd ]
 
-    let result = transform tokens
+    let result = transform tokens |> fst
     let expected = [ Image("alt", "http://example.com"); Text " "; Image("", "local.jpg") ]
     Assert.Equal<HtmlElement list>(expected, result)
+
+[<Fact>]
+let ``Should parse multiple metadata entries`` () =
+    let tokens =
+        [ MetaMarker
+          Symbol 't'
+          Symbol 'i'
+          Symbol 't'
+          Symbol 'l'
+          Symbol 'e'
+          Symbol ':'
+          Symbol ' '
+          Symbol 'M'
+          Symbol 'y'
+          Symbol ' '
+          Symbol 'n'
+          Symbol 'o'
+          Symbol 't'
+          Symbol 'e'
+          NewLine
+          Symbol 'a'
+          Symbol 'u'
+          Symbol 't'
+          Symbol 'h'
+          Symbol 'o'
+          Symbol 'r'
+          Symbol ':'
+          Symbol ' '
+          Symbol 'I'
+          Symbol 'h'
+          Symbol 'o'
+          Symbol 'r'
+          NewLine
+          Symbol 'd'
+          Symbol 'a'
+          Symbol 't'
+          Symbol 'e'
+          Symbol ':'
+          Symbol ' '
+          Symbol '2'
+          Symbol '0'
+          Symbol '2'
+          Symbol '5'
+          NewLine
+          MetaMarker ]
+
+    let result = transform tokens |> snd
+
+    let expected =
+        Map.empty |> Map.add "title" "My note" |> Map.add "author" "Ihor" |> Map.add "date" "2025"
+
+    Assert.Equal<Map<string, string>>(expected, result)
