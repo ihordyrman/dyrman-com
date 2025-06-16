@@ -1,10 +1,14 @@
 ﻿open System.IO
+open Notes
+open Renderer
+open Tokenizer
+open Transformer
 
 let environment = System.Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
 
 let solutionFolder =
     match environment with
-    | "Development" -> "C:/Projects/homepage/"
+    | "Development" -> "~/Projects/dyrman-com/"
     | "Production" -> "."
     | _ -> failwith "Environment variable DOTNET_ENVIRONMENT is not set to Development"
 
@@ -13,17 +17,19 @@ Directory.GetFiles(@$"{solutionFolder}/notes/", "*.md", SearchOption.AllDirector
     printfn $"{file.Length}"
     file
 |> Array.iter (fun file ->
-    let content = File.ReadAllLines file |> Parser.convertMarkdownToHtml
+    let content =
+        File.ReadAllLines file
+        |> Array.map tokenize
+        |> List.concat
+        |> transform
+        ||> render
 
-    let htmlTemplate = Templates.note content.Meta.Title content.Meta.Date content.HtmlContent
-
-    File.WriteAllText(@$"{solutionFolder}/Notes/Outputs/{content.Meta.Path}.html", htmlTemplate, System.Text.Encoding.UTF8)
-
-    printfn $"{content}"
+    // todo: pack content inside template
+    // todo: clean up a mess
     ())
 
 Directory.GetFiles(@$"{solutionFolder}/Notes/Outputs/Images/", "*", SearchOption.AllDirectories)
-|> Array.iter (fun file -> File.Delete(file))
+|> Array.iter File.Delete
 
 Directory.GetFiles(@$"{solutionFolder}/notes/Images/", "*", SearchOption.AllDirectories)
 |> Array.iter (fun file ->

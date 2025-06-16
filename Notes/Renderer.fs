@@ -19,4 +19,4 @@ let private renderElement element =
     | Text content -> content
     | LineBreak -> "\n"
 
-let render (elements: HtmlElement list) = elements |> List.map renderElement |> String.concat ""
+let render (elements: HtmlElement list) (meta: Map<string, string>) : string = elements |> List.map renderElement |> String.concat ""
