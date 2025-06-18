@@ -26,7 +26,7 @@ let private (|Headers|_|) (line: string) =
         let count =
             line.Trim() |> fun x -> x.ToCharArray() |> Array.takeWhile ((=) '#') |> Array.length |> min 6
 
-        let rest = line.Substring count
+        let rest = (line.Substring count).Trim()
         Some(count, rest)
     else
         None
@@ -61,7 +61,7 @@ let private (|ParenOpen|_|) (text: string) = if text.StartsWith "(" then Some(te
 
 let private (|ParenClose|_|) (text: string) = if text.StartsWith ")" then Some(text.Substring 1) else None
 
-let tokenize line =
+let private tokenizeLine line =
 
     let cloneState state text marker = { CurrentText = text; Tokens = state.Tokens @ [ marker ] }
     let emptyState = { Tokens = []; CurrentText = line }
@@ -95,3 +95,7 @@ let tokenize line =
 
     let finalState = getTokens initialState
     finalState.Tokens @ [ NewLine ]
+
+let private getLines (text: string) = text.Split Environment.NewLine |> Array.toList
+
+let tokenize content = getLines content |> List.map tokenizeLine |> List.concat

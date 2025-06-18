@@ -33,7 +33,7 @@ let ``Single hash creates HeaderMarker level 1`` () =
     let result = tokenize "# Title"
 
     let expected =
-        [ HeaderMarker 1; Symbol ' '; Symbol 'T'; Symbol 'i'; Symbol 't'; Symbol 'l'; Symbol 'e'; NewLine ]
+        [ HeaderMarker 1; Symbol 'T'; Symbol 'i'; Symbol 't'; Symbol 'l'; Symbol 'e'; NewLine ]
 
     Assert.Equal<MarkdownToken list>(expected, result)
 
@@ -43,7 +43,6 @@ let ``Triple hash creates HeaderMarker level 3`` () =
 
     let expected =
         [ HeaderMarker 3
-          Symbol ' '
           Symbol 'S'
           Symbol 'u'
           Symbol 'b'
@@ -62,7 +61,6 @@ let ``Six hashes creates HeaderMarker level 6`` () =
 
     let expected =
         [ HeaderMarker 6
-          Symbol ' '
           Symbol 'D'
           Symbol 'e'
           Symbol 'e'

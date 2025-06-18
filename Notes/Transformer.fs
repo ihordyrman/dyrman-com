@@ -28,6 +28,8 @@ let private extractCodeBlock tokens language =
     let rec extract content tokens =
         match tokens with
         | Symbol ch :: rest -> extract (content + ch.ToString()) rest
+        | ParenOpen :: rest -> extract (content + "(") rest
+        | ParenClose :: rest -> extract (content + ")") rest
         | NewLine :: rest -> extract (content + Environment.NewLine) rest
         | CodeBlockMarker _ :: rest -> content, rest
         | _ -> content, tokens

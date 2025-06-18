@@ -19,7 +19,6 @@ let private renderElement element =
     | Text content -> content
     | LineBreak -> "\n"
 
-let render (elements: HtmlElement list) (meta: Map<string, string>) : string =
-    
+let render (elements: HtmlElement list) (meta: Map<string, string>) =
     let content = elements |> List.map renderElement |> String.concat ""
-    Templates.note meta["title"] meta["date"] content
+    content, meta
