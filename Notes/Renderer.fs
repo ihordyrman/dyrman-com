@@ -1,5 +1,6 @@
 module Notes.Renderer
 
+open System
 open Notes.Transformer
 
 let private renderElement element =
@@ -17,8 +18,8 @@ let private renderElement element =
     | Link(text, url) -> $"<a href=\"{url}\">{text}</a>"
     | Image(alt, url) -> $"<img src=\"{url}\" alt=\"{alt}\" />"
     | Text content -> content
-    | LineBreak -> "\n"
+    | LineBreak -> Environment.NewLine
 
-let render (elements: HtmlElement list) (meta: Map<string, string>) =
+let render elements meta =
     let content = elements |> List.map renderElement |> String.concat ""
     content, meta
