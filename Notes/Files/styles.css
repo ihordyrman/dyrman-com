@@ -8,6 +8,7 @@
     --primary: rgb(12, 16, 27);
     --light: rgb(230, 231, 235);
     --white: rgb(255 255 255);
+    --code: rgb(245, 245, 245);
 }
 
 * {
@@ -195,4 +196,94 @@ blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
 
 .min-w-0 {
     min-width: 0;
+}
+
+.relative {
+    position: relative;
+}
+
+.note-content {
+    margin-bottom: 1rem;
+}
+
+.note-content h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--black);
+}
+
+.note-content h2 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--black);
+}
+
+.note-content h3 {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--black);
+}
+
+.note-content h4,
+.note-content h5,
+.note-content h6 {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--black);
+}
+
+.note-content strong {
+    font-weight: 700;
+    color: var(--black);
+}
+
+.note-content ul {
+    margin-bottom: 1rem;
+    padding-left: 1.25rem;
+}
+
+.note-content li {
+    margin-bottom: 0.5rem;
+}
+
+.note-content pre {
+    background-color: var(--code);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    border-radius: 0.25rem;
+}
+
+.note-content code {
+    background-color: var(--code);
+    padding: 0.125rem 0.25rem;
+    font-size: 0.875rem;
+}
+
+.note-content pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: 0.875rem;
+}
+
+.note-content img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.note-content > * + * {
+    margin-top: 1rem;
 }
