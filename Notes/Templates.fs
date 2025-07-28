@@ -14,7 +14,7 @@ let note title date htmlContent =
         <link rel="shortcut icon" href="../favicon.ico"/>
     </head>
     <body>
-        <div class="w-full min-h-screen bg-white px-8 py-4 font-mono">
+        <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>

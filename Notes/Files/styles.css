@@ -64,6 +64,11 @@ ul {
     padding-bottom: 1rem;
 }
 
+.py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
 blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
     margin: 0;
 }
