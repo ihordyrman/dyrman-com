@@ -12,12 +12,20 @@ let solutionFolder =
     | "Production" -> "./notes/"
     | _ -> failwith "Environment variable DOTNET_ENVIRONMENT is not set to Development"
 
+let media = Directory.CreateDirectory(Path.Combine(solutionFolder, "media"))
+
 Directory.CreateDirectory solutionFolder
 |> fun x -> Directory.EnumerateFiles(x.FullName, "*.md", SearchOption.AllDirectories)
 |> Seq.toArray
 |> Array.iter (fun file ->
     let content, meta = File.ReadAllText file |> tokenize |> transform ||> render
-
     let html = Templates.note meta["title"] meta["date"] content
     File.WriteAllText($"{solutionFolder}test.html", html)
     ())
+
+Directory.EnumerateFiles(solutionFolder, "*.webp", SearchOption.AllDirectories)
+|> Seq.toArray
+|> Array.iter (fun file ->
+    let fileName = Path.GetFileName file 
+    let destPath = Path.Combine(media.FullName, fileName)
+    File.Move(file, destPath))

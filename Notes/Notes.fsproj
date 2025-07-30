@@ -7,7 +7,6 @@
 
     <ItemGroup>
         <Content Include="Properties\launchSettings.json" />
-        <Folder Include="Outputs\" />
         <Content Include="Files\styles.css">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
