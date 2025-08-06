@@ -22,6 +22,7 @@
         <Content Include="Files\bootstrap.min.css">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Compile Include="Helpers.fs" />
         <Compile Include="Templates.fs" />
         <Compile Include="Tokenizer.fs" />
         <Compile Include="Transformer.fs" />
