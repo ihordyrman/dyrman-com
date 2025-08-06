@@ -155,4 +155,4 @@ font-awesome/*
 
 # Static files (while in development)
 /NotesGenerator/Outputs/
-/notes/
+/homepage/

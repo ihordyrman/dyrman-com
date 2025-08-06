@@ -1,10 +1,8 @@
 ﻿<Solution>
-  <Folder Name="/homepage/">
-    <File Path="homepage\favicon.ico" />
-    <File Path="homepage\index.html" />
-    <File Path="homepage\app.css" />
+  <Folder Name="/homepage/" />
+  <Folder Name="/notes/">
+    <File Path="notes\Example.md" />
   </Folder>
-  <Folder Name="/notes/" />
   <Project Path="Notes.Tests\Notes.Tests.fsproj" Type="Classic F#" />
   <Project Path="Notes\Notes.fsproj" Type="Classic F#" />
 </Solution>

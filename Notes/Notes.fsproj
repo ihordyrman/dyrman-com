@@ -16,9 +16,6 @@
         <Content Include="Files\favicon.ico">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Files\index.html">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
         <Content Include="Files\bootstrap.min.css">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
