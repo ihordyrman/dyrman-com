@@ -38,11 +38,11 @@ Directory.EnumerateFiles("./Files", "*", SearchOption.AllDirectories)
 |> Array.iter (fun file ->
     let fileName = Path.GetFileName file
     let destination = Path.Combine(staticFolder.FullName, fileName)
-    File.Move(file, destination, true))
+    File.Copy(file, destination, true))
 
 Directory.EnumerateFiles(root, "*.webp", SearchOption.AllDirectories)
 |> Seq.toArray
 |> Array.iter (fun file ->
     let fileName = Path.GetFileName file
     let destination = Path.Combine(mediaFolder.FullName, fileName)
-    File.Move(file, destination, true))
+    File.Copy(file, destination, true))

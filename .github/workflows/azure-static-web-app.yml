@@ -1,0 +1,58 @@
+name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dotnet_build_and_generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    name: .NET Build, Test, and Generate
+    env:
+      DOTNET_ENVIRONMENT: Production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build application
+        run: dotnet build --no-restore -c Release
+      - name: Run tests
+        run: dotnet test --no-build -c Release
+      - name: Publish application
+        run: dotnet publish ./Notes/Notes.fsproj -c Release -o ./publish
+      - name: Execute generation
+        run: ./publish/Notes
+      - name: Upload generated files
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-homepage
+          path: homepage/
+          retention-days: 1
+
+
+#  build_and_deploy_job:
+#    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+#    runs-on: ubuntu-latest
+#    name: Build and Deploy Job
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          submodules: true
+#      - name: Build And Deploy
+#        id: builddeploy
+#        uses: Azure/static-web-apps-deploy@v1
+#        with:
+#          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_OCEAN_0B7825E03 }}
+#          repo_token: ${{ secrets.GITHUB_TOKEN }}
+#          action: "upload"
+#          app_location: "/homepage"
+#          api_location: ""
+#          output_location: "/" # Built app content directory - optional

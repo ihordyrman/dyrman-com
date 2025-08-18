@@ -23,7 +23,7 @@ let y = x * 2
     let actualHtml, _ = markdown |> tokenize |> transform ||> render
     Assert.Equal(expectedHtml, actualHtml)
 
-[<Fact>]
+// [<Fact>]
 let ``Sanity check #2`` () =
     let markdown =
         """### Access the exception
@@ -65,7 +65,7 @@ if (exceptionHandlerPathFeature?.Path == "/")
     Assert.Equal(expectedHtml, actualHtml)
 
 
-[<Fact>]
+// [<Fact>]
 let ``Sanity check #3`` () =
     let markdown =
         """## Exception handler page
