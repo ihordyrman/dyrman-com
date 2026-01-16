@@ -13,6 +13,8 @@
         <File Path="stream\2025-01-05-new-year.md" />
         <File Path="stream\2025-01-10-rop.md" />
     </Folder>
-    <Project Path="Notes.Tests\Notes.Tests.fsproj" />
-    <Project Path="Notes\Notes.fsproj" />
+    <Folder Name="/src/">
+        <Project Path="src/Notes.Tests/Notes.Tests.fsproj" />
+        <Project Path="src/Notes/Notes.fsproj" />
+    </Folder>
 </Solution>

@@ -32,7 +32,7 @@ jobs:
         run: dotnet test --no-build -c Release
 
       - name: Publish application
-        run: dotnet publish ./Notes/Notes.fsproj -c Release -o ./publish
+        run: dotnet publish ./src/Notes/Notes.fsproj -c Release -o ./publish
 
       - name: Execute generation
         run: ./publish/Notes
