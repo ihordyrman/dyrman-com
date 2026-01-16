@@ -12,15 +12,15 @@ let note title date htmlContent =
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{title} - Ihor's Notes</title>
-        <link type="text/css" rel="stylesheet" href="../static/styles.css"/>
-        <link rel="shortcut icon" href="../static/favicon.ico"/>
+        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
     <body>
         <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="../index.html" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
                     </nav>
                 </header>
 
@@ -37,7 +37,7 @@ let note title date htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="../index.html" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
                     </nav>
                 </footer>
             </div>
@@ -55,22 +55,22 @@ let readingList htmlContent =
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Reading List - Ihor's Notes</title>
-        <link type="text/css" rel="stylesheet" href="static/styles.css"/>
-        <link rel="shortcut icon" href="static/favicon.ico"/>
+        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
     <body>
         <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
                     </nav>
                 </header>
 
                 <article class="max-w-4xl">
                     <header class="mb-8">
                         <h1 class="text-2xl text-black mb-2 font-bold">Reading List</h1>
-                        <p class="text-gray">Books and articles worth reading</p>
+                        <p class="text-gray">Books I'm reading</p>
                     </header>
 
                     <div class="note-content text-gray leading-relaxed">
@@ -80,7 +80,7 @@ let readingList htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
                     </nav>
                 </footer>
             </div>
@@ -101,9 +101,7 @@ let private streamEntry date htmlContent =
 
 let stream (entries: (string * string) list) =
     let entriesHtml =
-        entries
-        |> List.map (fun (date, content) -> streamEntry date content)
-        |> String.concat ""
+        entries |> List.map (fun (date, content) -> streamEntry date content) |> String.concat ""
 
     $"""
     <!DOCTYPE html>
@@ -113,15 +111,15 @@ let stream (entries: (string * string) list) =
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Stream - Ihor's Notes</title>
-        <link type="text/css" rel="stylesheet" href="static/styles.css"/>
-        <link rel="shortcut icon" href="static/favicon.ico"/>
+        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
     <body>
         <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
                     </nav>
                 </header>
 
@@ -138,7 +136,7 @@ let stream (entries: (string * string) list) =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
                     </nav>
                 </footer>
             </div>
@@ -154,7 +152,7 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream =
         |> Array.map (fun meta ->
             let title = meta["title"]
             let date = meta["date"]
-            let path = "notes/" + (Helpers.titleToUrlPath title) + ".html"
+            let path = "/notes/" + (Helpers.titleToUrlPath title)
 
             $"""
              <li class="mb-3 min-w-0 before:absolute before:-ml-5 before:text-gray relative">
@@ -178,15 +176,9 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream =
                 """
             | _ -> ""
 
-    let readingListLink =
-        if hasReadingList then
-            """<a href="library.html" class="mr-4">Library</a>"""
-        else ""
+    let readingListLink = if hasReadingList then """<a href="/library" class="mr-4">Library</a>""" else ""
 
-    let streamLink =
-        if hasStream then
-            """<a href="stream.html" class="mr-4">Stream</a>"""
-        else ""
+    let streamLink = if hasStream then """<a href="/stream" class="mr-4">Stream</a>""" else ""
 
     $"""
 <!DOCTYPE html>
@@ -196,8 +188,8 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream =
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ihor's homepage</title>
-    <link type="text/css" rel="stylesheet" href="static/styles.css" />
-    <link rel="shortcut icon" href="static/favicon.ico"/>
+    <link type="text/css" rel="stylesheet" href="/static/styles.css" />
+    <link rel="shortcut icon" href="/static/favicon.ico"/>
 </head>
 
 <body>

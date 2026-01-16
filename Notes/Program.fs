@@ -46,7 +46,8 @@ notes
     if meta.ContainsKey("title") && meta.ContainsKey("date") then
         let html = Templates.note meta["title"] meta["date"] content
         let path = Helpers.titleToUrlPath meta["title"]
-        File.WriteAllText($"{notesFolder}/{path}.html", html))
+        let noteFolder = Directory.CreateDirectory(Path.Combine(notesFolder.FullName, path))
+        File.WriteAllText(Path.Combine(noteFolder.FullName, "index.html"), html))
 
 let readingListPath = Path.Combine(root, "library", "reading-list.md")
 let hasReadingList = File.Exists(readingListPath)
@@ -54,7 +55,8 @@ let hasReadingList = File.Exists(readingListPath)
 if hasReadingList then
     let content, _ = processMarkdown readingListPath
     let html = Templates.readingList content
-    File.WriteAllText($"{homepageFolder.FullName}/library.html", html)
+    let libraryFolder = Directory.CreateDirectory(Path.Combine(homepageFolder.FullName, "library"))
+    File.WriteAllText(Path.Combine(libraryFolder.FullName, "index.html"), html)
 
 let streamPath = Path.Combine(root, "stream")
 
@@ -77,10 +79,11 @@ let streamEntries =
 
 if hasStream then
     let html = Templates.stream streamEntries
-    File.WriteAllText($"{homepageFolder.FullName}/stream.html", html)
+    let streamFolder = Directory.CreateDirectory(Path.Combine(homepageFolder.FullName, "stream"))
+    File.WriteAllText(Path.Combine(streamFolder.FullName, "index.html"), html)
 
 Templates.index (notes |> Array.map snd) hasReadingList hasStream
-|> fun x -> File.WriteAllText($"{homepageFolder.FullName}/index.html", x)
+|> fun x -> File.WriteAllText(Path.Combine(homepageFolder.FullName, "index.html"), x)
 
 let filesPath = Path.Combine(executableDir, "Files")
 
