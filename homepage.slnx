@@ -1,4 +1,7 @@
 ﻿<Solution>
+    <Folder Name="/articles/">
+        <File Path="articles\worth-reading.md" />
+    </Folder>
     <Folder Name="/homepage/" />
     <Folder Name="/library/">
         <File Path="library\reading-list.md" />

@@ -58,6 +58,15 @@ if hasReadingList then
     let libraryFolder = Directory.CreateDirectory(Path.Combine(homepageFolder.FullName, "library"))
     File.WriteAllText(Path.Combine(libraryFolder.FullName, "index.html"), html)
 
+let articlesPath = Path.Combine(root, "articles", "worth-reading.md")
+let hasArticles = File.Exists(articlesPath)
+
+if hasArticles then
+    let content, _ = processMarkdown articlesPath
+    let html = Templates.articles content
+    let articlesFolder = Directory.CreateDirectory(Path.Combine(homepageFolder.FullName, "articles"))
+    File.WriteAllText(Path.Combine(articlesFolder.FullName, "index.html"), html)
+
 let streamPath = Path.Combine(root, "stream")
 
 let hasStream =
@@ -82,7 +91,7 @@ if hasStream then
     let streamFolder = Directory.CreateDirectory(Path.Combine(homepageFolder.FullName, "stream"))
     File.WriteAllText(Path.Combine(streamFolder.FullName, "index.html"), html)
 
-Templates.index (notes |> Array.map snd) hasReadingList hasStream
+Templates.index (notes |> Array.map snd) hasReadingList hasStream hasArticles
 |> fun x -> File.WriteAllText(Path.Combine(homepageFolder.FullName, "index.html"), x)
 
 let filesPath = Path.Combine(executableDir, "Files")
@@ -107,4 +116,5 @@ Directory.EnumerateFiles(root, "*.webp", SearchOption.AllDirectories)
 printfn "Generated:"
 printfn $"  - %d{notes.Length} notes"
 printfn $"  - Reading list: %b{hasReadingList}"
+printfn $"  - Articles: %b{hasArticles}"
 printfn $"  - Stream entries: %d{streamEntries.Length}"

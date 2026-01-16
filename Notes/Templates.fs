@@ -69,8 +69,49 @@ let readingList htmlContent =
 
                 <article class="max-w-4xl">
                     <header class="mb-8">
-                        <h1 class="text-2xl text-black mb-2 font-bold">Reading List</h1>
-                        <p class="text-gray">Books I'm reading</p>
+                        <p class="text-gray">Books I'm reading now</p>
+                    </header>
+
+                    <div class="note-content text-gray leading-relaxed">
+                        {htmlContent}
+                    </div>
+                </article>
+
+                <footer class="mt-8 pt-4 border-t border-gray">
+                    <nav>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
+                    </nav>
+                </footer>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+let articles htmlContent =
+    $"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Worth Reading - Ihor's Notes</title>
+        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <link rel="shortcut icon" href="/static/favicon.ico"/>
+    </head>
+    <body>
+        <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
+            <div class="max-w-4xl">
+                <header class="mb-8 border-b border-gray pb-4">
+                    <nav>
+                        <a href="/" class="text-indigo">← Back to homepage</a>
+                    </nav>
+                </header>
+
+                <article class="max-w-4xl">
+                    <header class="mb-8">
+                        <p class="text-gray">A curated list of articles that I like and recommend.</p>
                     </header>
 
                     <div class="note-content text-gray leading-relaxed">
@@ -145,7 +186,7 @@ let stream (entries: (string * string) list) =
     </html>
     """
 
-let index (notes: Map<string, string>[]) hasReadingList hasStream =
+let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles =
 
     let notesSection =
         notes
@@ -180,6 +221,8 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream =
 
     let streamLink = if hasStream then """<a href="/stream" class="mr-4">Stream</a>""" else ""
 
+    let articlesLink = if hasArticles then """<a href="/articles" class="mr-4">Worthy</a>""" else ""
+
     $"""
 <!DOCTYPE html>
 <html lang="en">
@@ -204,6 +247,7 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream =
                 <a href="https://github.com/ihordyrman/" target="_blank" rel="noopener noreferrer"
                    class="mr-4">GitHub</a>
                 {readingListLink}
+                {articlesLink}
                 {streamLink}
             </nav>
 
