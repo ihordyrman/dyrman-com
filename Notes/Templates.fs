@@ -46,7 +46,108 @@ let note title date htmlContent =
     </html>
     """
 
-let index (notes: Map<string, string>[]) =
+let readingList htmlContent =
+    $"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Reading List - Ihor's Notes</title>
+        <link type="text/css" rel="stylesheet" href="static/styles.css"/>
+        <link rel="shortcut icon" href="static/favicon.ico"/>
+    </head>
+    <body>
+        <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
+            <div class="max-w-4xl">
+                <header class="mb-8 border-b border-gray pb-4">
+                    <nav>
+                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                    </nav>
+                </header>
+
+                <article class="max-w-4xl">
+                    <header class="mb-8">
+                        <h1 class="text-2xl text-black mb-2 font-bold">Reading List</h1>
+                        <p class="text-gray">Books and articles worth reading</p>
+                    </header>
+
+                    <div class="note-content text-gray leading-relaxed">
+                        {htmlContent}
+                    </div>
+                </article>
+
+                <footer class="mt-8 pt-4 border-t border-gray">
+                    <nav>
+                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                    </nav>
+                </footer>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+let private streamEntry date htmlContent =
+    $"""
+    <article class="mb-8 pb-8 border-b border-gray">
+        <time class="text-gray text-sm">{date}</time>
+        <div class="note-content text-gray leading-relaxed mt-2">
+            {htmlContent}
+        </div>
+    </article>
+    """
+
+let stream (entries: (string * string) list) =
+    let entriesHtml =
+        entries
+        |> List.map (fun (date, content) -> streamEntry date content)
+        |> String.concat ""
+
+    $"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Stream - Ihor's Notes</title>
+        <link type="text/css" rel="stylesheet" href="static/styles.css"/>
+        <link rel="shortcut icon" href="static/favicon.ico"/>
+    </head>
+    <body>
+        <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
+            <div class="max-w-4xl">
+                <header class="mb-8 border-b border-gray pb-4">
+                    <nav>
+                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                    </nav>
+                </header>
+
+                <section class="max-w-4xl">
+                    <header class="mb-8">
+                        <h1 class="text-2xl text-black mb-2 font-bold">Stream</h1>
+                        <p class="text-gray">Random thoughts and observations</p>
+                    </header>
+
+                    <div class="stream-entries">
+                        {entriesHtml}
+                    </div>
+                </section>
+
+                <footer class="mt-8 pt-4 border-t border-gray">
+                    <nav>
+                        <a href="index.html" class="text-indigo">← Back to homepage</a>
+                    </nav>
+                </footer>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+let index (notes: Map<string, string>[]) hasReadingList hasStream =
 
     let notesSection =
         notes
@@ -77,6 +178,16 @@ let index (notes: Map<string, string>[]) =
                 """
             | _ -> ""
 
+    let readingListLink =
+        if hasReadingList then
+            """<a href="library.html" class="mr-4">Library</a>"""
+        else ""
+
+    let streamLink =
+        if hasStream then
+            """<a href="stream.html" class="mr-4">Stream</a>"""
+        else ""
+
     $"""
 <!DOCTYPE html>
 <html lang="en">
@@ -100,8 +211,8 @@ let index (notes: Map<string, string>[]) =
             <nav class="mb-8">
                 <a href="https://github.com/ihordyrman/" target="_blank" rel="noopener noreferrer"
                    class="mr-4">GitHub</a>
-                <a href="https://www.linkedin.com/in/dyrman/" target="_blank" rel="noopener noreferrer"
-                   class="mr-4">LinkedIn</a>
+                {readingListLink}
+                {streamLink}
             </nav>
 
             <section class="mb-8 max-w-2xl">
@@ -112,37 +223,6 @@ let index (notes: Map<string, string>[]) =
                 </p>
             </section>
             
-            <section class="mb-8 max-w-2xl">
-                <h2 class="text-xl mb-4 font-bold">mostly work with</h2>
-                <ul class="pl-5">
-                    <li class="mb-3 min-w-0 before:absolute before:-ml-5 before:text-gray relative">
-                        <div class="flex flex-wrap items-baseline gap-1 text-gray">
-                            <span><b>Languages</b>: C#, F#, PowerShell</span>
-                        </div>
-                    </li>
-                    <li class="mb-3 min-w-0 before:absolute before:-ml-5 before:text-gray relative">
-                        <div class="flex flex-wrap items-baseline gap-1 text-gray">
-                            <span><b>Frameworks</b>: .NET, ASP.NET Core, Entity Framework Core</span>
-                        </div>
-                    </li>
-                    <li class="mb-3 min-w-0 before:absolute before:-ml-5 before:text-gray relative">
-                        <div class="flex flex-wrap items-baseline gap-1 text-gray">
-                            <span><b>Infrastructure</b>: Azure, Kubernetes</span>
-                        </div>
-                    </li>
-                    <li class="mb-3 min-w-0 before:absolute before:-ml-5 before:text-gray relative">
-                        <div class="flex flex-wrap items-baseline gap-1 text-gray">
-                            <span><b>Databases</b>: PostgreSQL, Redis</span>
-                        </div>
-                    </li>
-                    <li class="mb-3 min-w-0 before:absolute before:-ml-5 before:text-gray relative">
-                        <div class="flex flex-wrap items-baseline gap-1 text-gray">
-                            <span><b>Other</b>: Kafka, Grafana, Prometheus, Open Telemetry</span>
-                        </div>
-                    </li>
-                </ul>
-            </section>
-
             {notesSection}
 
             <section id="contact" class="mt-8">
@@ -155,7 +235,7 @@ let index (notes: Map<string, string>[]) =
         </main>
 
         <footer class="mt-8 pt-4 border-t border-gray">
-            <!-- Footer content epmpy for now -->
+            <!-- Footer content empty for now -->
         </footer>
     </div>
 </div>

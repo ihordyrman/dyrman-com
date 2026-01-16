@@ -1,8 +1,15 @@
 ﻿<Solution>
-  <Folder Name="/homepage/" />
-  <Folder Name="/notes/">
-    <File Path="notes\Example.md" />
-  </Folder>
-  <Project Path="Notes.Tests\Notes.Tests.fsproj" Type="Classic F#" />
-  <Project Path="Notes\Notes.fsproj" Type="Classic F#" />
+    <Folder Name="/homepage/" />
+    <Folder Name="/library/">
+        <File Path="library\reading-list.md" />
+    </Folder>
+    <Folder Name="/notes/">
+        <File Path="notes\Example.md" />
+    </Folder>
+    <Folder Name="/stream/">
+        <File Path="stream\2025-01-05-new-year.md" />
+        <File Path="stream\2025-01-10-rop.md" />
+    </Folder>
+    <Project Path="Notes.Tests\Notes.Tests.fsproj" />
+    <Project Path="Notes\Notes.fsproj" />
 </Solution>

@@ -59,6 +59,11 @@ ul {
     padding-right: 2rem;
 }
 
+.py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
 .py-8 {
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -112,6 +117,10 @@ blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
     margin-top: 2rem;
 }
 
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
 .text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -120,6 +129,11 @@ blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
 .text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 }
 
 .font-bold {
@@ -142,6 +156,10 @@ blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
     padding-bottom: 1rem;
 }
 
+.pb-8 {
+    padding-bottom: 2rem;
+}
+
 .pt-4 {
     padding-top: 1rem;
 }
@@ -156,6 +174,10 @@ blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
 
 .text-indigo {
     color: var(--indigo);
+}
+
+.text-purple {
+    color: var(--purple);
 }
 
 .leading-relaxed {
@@ -282,4 +304,10 @@ blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
 
 .note-content > * + * {
     margin-top: 1rem;
+}
+
+.stream-entries article:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
