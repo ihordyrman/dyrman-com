@@ -91,7 +91,7 @@ if hasStream then
     let streamFolder = Directory.CreateDirectory(Path.Combine(homepageFolder.FullName, "stream"))
     File.WriteAllText(Path.Combine(streamFolder.FullName, "index.html"), html)
 
-Templates.index (notes |> Array.map snd) hasReadingList hasStream hasArticles
+Templates.index (notes |> Array.map snd) hasReadingList hasStream hasArticles (streamEntries |> List.truncate 3)
 |> fun x -> File.WriteAllText(Path.Combine(homepageFolder.FullName, "index.html"), x)
 
 let filesPath = Path.Combine(executableDir, "Files")

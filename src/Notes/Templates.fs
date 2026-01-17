@@ -11,7 +11,7 @@ let note title date htmlContent =
         <meta charset="utf-8"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{title} - Ihor's Notes</title>
+        <title>{title} - ihor's notes</title>
         <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
@@ -20,7 +20,7 @@ let note title date htmlContent =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </header>
 
@@ -37,7 +37,7 @@ let note title date htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </footer>
             </div>
@@ -54,7 +54,7 @@ let readingList htmlContent =
         <meta charset="utf-8"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Reading List - Ihor's Notes</title>
+        <title>reading list - ihor's notes</title>
         <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
@@ -63,13 +63,13 @@ let readingList htmlContent =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </header>
 
                 <article class="max-w-4xl">
                     <header class="mb-8">
-                        <p class="text-gray">Books I'm reading now</p>
+                        <p class="text-gray">books I'm reading now</p>
                     </header>
 
                     <div class="note-content text-gray leading-relaxed">
@@ -79,7 +79,7 @@ let readingList htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </footer>
             </div>
@@ -96,7 +96,7 @@ let articles htmlContent =
         <meta charset="utf-8"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Worth Reading - Ihor's Notes</title>
+        <title>worth reading - ihor's notes</title>
         <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
@@ -105,13 +105,13 @@ let articles htmlContent =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </header>
 
                 <article class="max-w-4xl">
                     <header class="mb-8">
-                        <p class="text-gray">A curated list of articles that I like and recommend.</p>
+                        <p class="text-gray">a curated list of articles that I like and recommend</p>
                     </header>
 
                     <div class="note-content text-gray leading-relaxed">
@@ -121,7 +121,7 @@ let articles htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </footer>
             </div>
@@ -151,7 +151,7 @@ let stream (entries: (string * string) list) =
         <meta charset="utf-8"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Stream - Ihor's Notes</title>
+        <title>stream - Ihor's notes</title>
         <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
@@ -160,14 +160,13 @@ let stream (entries: (string * string) list) =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </header>
 
                 <section class="max-w-4xl">
                     <header class="mb-8">
-                        <h1 class="text-2xl text-black mb-2 font-bold">Stream</h1>
-                        <p class="text-gray">Random thoughts and observations</p>
+                        <p class="text-gray">random thoughts and observations</p>
                     </header>
 
                     <div class="stream-entries">
@@ -177,7 +176,7 @@ let stream (entries: (string * string) list) =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← Back to homepage</a>
+                        <a href="/" class="text-indigo">← back to homepage</a>
                     </nav>
                 </footer>
             </div>
@@ -186,7 +185,7 @@ let stream (entries: (string * string) list) =
     </html>
     """
 
-let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles =
+let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles (recentStream: (string * string) list) =
 
     let notesSection =
         notes
@@ -209,7 +208,7 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles =
             | x when x.Length > 0 ->
                 $"""
                 <section class="mb-8 max-w-2xl">
-                    <h2 class="text-xl mb-4 font-bold">latest notes</h2>
+                    <h2 class="mb-4 font-bold">latest notes</h2>
                     <ul class="pl-5">
                         {content}
                     </ul>
@@ -217,11 +216,35 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles =
                 """
             | _ -> ""
 
-    let readingListLink = if hasReadingList then """<a href="/library" class="mr-4">Library</a>""" else ""
+    let streamSection =
+        recentStream
+        |> List.map (fun (date, content) ->
+            $"""
+            <article class="mb-4 pb-4 border-b border-gray">
+                <time class="text-gray text-sm">{date}</time>
+                <div class="note-content text-gray leading-relaxed mt-2">
+                    {content}
+                </div>
+            </article>
+            """)
+        |> String.concat ""
+        |> fun content ->
+            match content with
+            | x when x.Length > 0 ->
+                $"""
+                <section class="mb-8 max-w-2xl">
+                    <h2 class="mb-4 font-bold">recent thoughts</h2>
+                    {content}
+                    <a href="/stream" class="text-indigo">→ all thoughts</a>
+                </section>
+                """
+            | _ -> ""
 
-    let streamLink = if hasStream then """<a href="/stream" class="mr-4">Stream</a>""" else ""
+    let readingListLink = if hasReadingList then """<a href="/library" class="mr-4">library</a>""" else ""
 
-    let articlesLink = if hasArticles then """<a href="/articles" class="mr-4">Worthy</a>""" else ""
+    let streamLink = if hasStream then """<a href="/stream" class="mr-4">stream</a>""" else ""
+
+    let articlesLink = if hasArticles then """<a href="/articles" class="mr-4">worthy</a>""" else ""
 
     $"""
 <!DOCTYPE html>
@@ -230,7 +253,7 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles =
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ihor's homepage</title>
+    <title>ihor's homepage</title>
     <link type="text/css" rel="stylesheet" href="/static/styles.css" />
     <link rel="shortcut icon" href="/static/favicon.ico"/>
 </head>
@@ -239,32 +262,34 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles =
 <div class="w-full min-h-screen bg-white px-8 py-8 font-mono">
     <div class="max-w-4xl">
         <header class="mb-8 border-b border-gray pb-4">
-            <h1 class="text-black text-2xl mb-2">Ihor Dyrman</h1>
+            <h1 class="text-black">Ihor Dyrman</h1>
         </header>
 
         <main>
             <nav class="mb-8">
                 <a href="https://github.com/ihordyrman/" target="_blank" rel="noopener noreferrer"
-                   class="mr-4">GitHub</a>
+                   class="mr-4">code</a>
                 {readingListLink}
                 {articlesLink}
                 {streamLink}
             </nav>
 
             <section class="mb-8 max-w-2xl">
-                <h2 class="text-xl mb-4 font-bold">hey there!</h2>
+                <h2 class="mb-4 font-bold">hey there!</h2>
                 <p class="mb-8 text-gray leading-relaxed">
-                    I'm a software engineer with a passion for backend development and a strong interest in cloud technologies, distributed
+                    i'm a software engineer with a passion for backend development and a strong interest in cloud technologies, distributed
                     systems, and DevOps.
                 </p>
             </section>
             
             {notesSection}
 
+            {streamSection}
+
             <section id="contact" class="mt-8">
-                <h2 class="text-xl mb-4 font-bold">contact</h2>
+                <h2 class="mb-4 font-bold">contact</h2>
                 <p class="text-gray">
-                    The easiest way to contact me is via
+                    the easiest way to contact me is via
                     <a href="https://www.linkedin.com/in/dyrman/" target="_blank">LinkedIn</a>.
                 </p>
             </section>
