@@ -220,7 +220,7 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles (r
         recentStream
         |> List.map (fun (date, content) ->
             $"""
-            <article class="mb-4 pb-4 border-b border-gray">
+            <article class="mb-4">
                 <time class="text-gray text-sm">{date}</time>
                 <div class="note-content text-gray leading-relaxed mt-2">
                     {content}
