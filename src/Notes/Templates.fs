@@ -69,7 +69,7 @@ let readingList htmlContent =
 
                 <article class="max-w-4xl">
                     <header class="mb-8">
-                        <p class="text-gray">books I'm reading now</p>
+                        <p class="text-gray">books I read recently</p>
                     </header>
 
                     <div class="note-content text-gray leading-relaxed">

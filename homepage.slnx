@@ -10,9 +10,8 @@
         <File Path="notes\Example.md" />
     </Folder>
     <Folder Name="/stream/">
-        <File Path="stream\2025-01-05-new-year.md" />
-        <File Path="stream\2025-01-10-rop.md" />
-        <File Path="stream\2025-01-18-year-of-linux.md" />
+        <File Path="stream\2026-01-18-year-of-linux.md" />
+        <File Path="stream\2026-02-02-quit.md" />
     </Folder>
     <Folder Name="/src/">
         <Project Path="src/Notes.Tests/Notes.Tests.fsproj" />
