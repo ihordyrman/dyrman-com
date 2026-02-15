@@ -12,6 +12,7 @@
     <Folder Name="/stream/">
         <File Path="stream\2026-01-18-year-of-linux.md" />
         <File Path="stream\2026-02-02-quit.md" />
+        <File Path="stream\2026-02-14-notebooklm.md" />
     </Folder>
     <Folder Name="/src/">
         <Project Path="src/Notes.Tests/Notes.Tests.fsproj" />
