@@ -14,5 +14,6 @@
 - [On loyalty to your employer](https://www.talentstuff.com/blog/on-loyalty-to-your-employer) by Stevie Buckley
 
 ## other
+- [A website to destroy all websites](https://henry.codes/writing/a-website-to-destroy-all-websites/) by Henry Desroches
 - [Worse, but unique](https://longform.asmartbear.com/worse-but-unique/) by Jason Cohen
 - [Getting our focus back](https://renegadeotter.com/2023/08/24/getting-your-focus-back.html) by Andrei Taranchenko
