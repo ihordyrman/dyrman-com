@@ -12,7 +12,7 @@ let note title date htmlContent =
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{title} - ihor's notes</title>
-        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <style>{Styles.css}</style>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
     <body>
@@ -20,7 +20,7 @@ let note title date htmlContent =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </header>
 
@@ -37,7 +37,7 @@ let note title date htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </footer>
             </div>
@@ -55,7 +55,7 @@ let readingList htmlContent =
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>reading list - ihor's notes</title>
-        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <style>{Styles.css}</style>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
     <body>
@@ -63,7 +63,7 @@ let readingList htmlContent =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </header>
 
@@ -79,7 +79,7 @@ let readingList htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </footer>
             </div>
@@ -97,7 +97,7 @@ let articles htmlContent =
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>worth reading - ihor's notes</title>
-        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <style>{Styles.css}</style>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
     <body>
@@ -105,7 +105,7 @@ let articles htmlContent =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </header>
 
@@ -121,7 +121,7 @@ let articles htmlContent =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </footer>
             </div>
@@ -152,7 +152,7 @@ let stream (entries: (string * string) list) =
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>stream - Ihor's notes</title>
-        <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+        <style>{Styles.css}</style>
         <link rel="shortcut icon" href="/static/favicon.ico"/>
     </head>
     <body>
@@ -160,7 +160,7 @@ let stream (entries: (string * string) list) =
             <div class="max-w-4xl">
                 <header class="mb-8 border-b border-gray pb-4">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </header>
 
@@ -176,7 +176,7 @@ let stream (entries: (string * string) list) =
 
                 <footer class="mt-8 pt-4 border-t border-gray">
                     <nav>
-                        <a href="/" class="text-indigo">← back to homepage</a>
+                        <a href="/" class="text-indigo">← back</a>
                     </nav>
                 </footer>
             </div>
@@ -185,7 +185,7 @@ let stream (entries: (string * string) list) =
     </html>
     """
 
-let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles (recentStream: (string * string) list) =
+let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles =
 
     let notesSection =
         notes
@@ -216,30 +216,6 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles (r
                 """
             | _ -> ""
 
-    let streamSection =
-        recentStream
-        |> List.map (fun (date, content) ->
-            $"""
-            <article class="mb-4">
-                <time class="text-gray text-sm">{date}</time>
-                <div class="note-content text-gray leading-relaxed mt-2">
-                    {content}
-                </div>
-            </article>
-            """)
-        |> String.concat ""
-        |> fun content ->
-            match content with
-            | x when x.Length > 0 ->
-                $"""
-                <section class="mb-8 max-w-2xl">
-                    <h2 class="mb-4 font-bold">recent thoughts</h2>
-                    {content}
-                    <a href="/stream" class="text-indigo">→ all thoughts</a>
-                </section>
-                """
-            | _ -> ""
-
     let readingListLink = if hasReadingList then """<a href="/library" class="mr-4">library</a>""" else ""
 
     let streamLink = if hasStream then """<a href="/stream" class="mr-4">stream</a>""" else ""
@@ -254,7 +230,7 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles (r
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ihor's homepage</title>
-    <link type="text/css" rel="stylesheet" href="/static/styles.css" />
+    <style>{Styles.css}</style>
     <link rel="shortcut icon" href="/static/favicon.ico"/>
 </head>
 
@@ -278,13 +254,11 @@ let index (notes: Map<string, string>[]) hasReadingList hasStream hasArticles (r
                 <h2 class="mb-4 font-bold">hey there!</h2>
                 <p class="mb-8 text-gray leading-relaxed">
                     i'm a software engineer with a passion for backend development and a strong interest in cloud technologies, distributed
-                    systems, and DevOps.
+                    systems, and automation.
                 </p>
             </section>
             
             {notesSection}
-
-            {streamSection}
 
             <section id="contact" class="mt-8">
                 <h2 class="mb-4 font-bold">contact</h2>

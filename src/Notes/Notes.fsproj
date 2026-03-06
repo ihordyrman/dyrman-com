@@ -7,9 +7,6 @@
 
     <ItemGroup>
         <Content Include="Properties\launchSettings.json" />
-        <Content Include="Files\styles.css">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
         <Content Include="Files\Bahnschrift.ttf">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
@@ -20,6 +17,7 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Compile Include="Helpers.fs" />
+        <Compile Include="Styles.fs" />
         <Compile Include="Templates.fs" />
         <Compile Include="Tokenizer.fs" />
         <Compile Include="Transformer.fs" />

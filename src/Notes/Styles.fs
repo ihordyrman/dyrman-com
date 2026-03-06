@@ -1,4 +1,8 @@
-﻿:root {
+[<RequireQualifiedAccess>]
+module Styles
+
+let css =
+    """:root {
     --light-gray: rgb(156 163 175);
     --black: rgb(0 0 0);
     --gray: rgb(67, 74, 85);
@@ -305,4 +309,4 @@ blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
-}
+}"""

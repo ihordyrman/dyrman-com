@@ -128,8 +128,7 @@ let transform tokens =
             let text, remaining = extractText rest
 
             match remaining with
-            | BoldMarker :: finalRemaining ->
-                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ Bold text ] }
+            | BoldMarker :: finalRemaining -> processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ Bold text ] }
             | _ -> processTokens { state with Tokens = state.Tokens.Tail }
         | HeaderMarker level :: rest ->
             let text, remaining = extractText rest
@@ -141,8 +140,7 @@ let transform tokens =
             let text, remaining = extractText rest
 
             match remaining with
-            | CodeMarker :: finalRemaining ->
-                processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ Code text ] }
+            | CodeMarker :: finalRemaining -> processTokens { state with Tokens = finalRemaining; Elements = state.Elements @ [ Code text ] }
             | _ -> processTokens { state with Tokens = state.Tokens.Tail }
         | ListMarker :: rest ->
             let items, remaining = extractList rest
